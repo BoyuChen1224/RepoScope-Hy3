@@ -42,3 +42,20 @@ def test_inspect_worktree_collects_core_signals(tmp_path: Path) -> None:
     assert manifest.signals["has_license"] is True
     assert manifest.signals["has_tests"] is True
     assert {doc.path for doc in manifest.documents} >= {"README.md", "LICENSE"}
+
+
+def test_inspect_worktree_recognizes_text_license(tmp_path: Path) -> None:
+    (tmp_path / "README.md").write_text("# Demo\n", encoding="utf-8")
+    (tmp_path / "LICENSE.txt").write_text("MIT License\n", encoding="utf-8")
+
+    manifest = inspect_worktree(
+        tmp_path,
+        "https://github.com/example/project",
+        "a" * 40,
+        "main",
+        "Assess production adoption.",
+        Settings(),
+    )
+
+    assert manifest.signals["has_license"] is True
+    assert "LICENSE.txt" in {document.path for document in manifest.documents}

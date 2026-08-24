@@ -44,7 +44,11 @@ IMPORTANT_NAMES = {
     "readme_cn.md",
     "license",
     "license.md",
+    "license.txt",
     "copying",
+    "copying.txt",
+    "notice",
+    "notice.txt",
     "pyproject.toml",
     "package.json",
     "requirements.txt",
@@ -241,7 +245,15 @@ def inspect_worktree(
         name = path.name.lower()
         has_tests = has_tests or "test" in lower or "spec" in lower
         has_ci = has_ci or lower.startswith(".github/workflows/")
-        has_license = has_license or name in {"license", "license.md", "copying"}
+        has_license = has_license or name in {
+            "license",
+            "license.md",
+            "license.txt",
+            "copying",
+            "copying.txt",
+            "notice",
+            "notice.txt",
+        }
         has_readme = has_readme or name.startswith("readme")
         has_security_policy = has_security_policy or name == "security.md"
 

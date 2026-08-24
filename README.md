@@ -35,6 +35,10 @@ generated five grounded claims and three risks in 20.523 seconds; deterministic 
 100 with 12/12 grounded references. Three semantic re-evaluations produced zero per-dimension score
 variance. This is one real case, not a substitute for a broader live set or human agreement.
 
+A separate real browser E2E against `pypa/sampleproject` found and fixed a `LICENSE.txt` ingestion bug,
+then completed both evaluation layers on the same frozen commit. See
+[`reports/live_ui_e2e.md`](reports/live_ui_e2e.md).
+
 ## Status
 
 The current milestone includes secure repository ingestion, versioned evidence/report schemas, an

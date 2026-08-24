@@ -72,6 +72,14 @@ RepoScope 采用五段式流程：
 `results/live/ed167494e5c6/`。它证明真实调用链已贯通，但样本量为 1，且生成与语义评审使用
 同一模型家族，不能替代跨仓库实验和真人标注。
 
+### 5.2 真实外部仓库浏览器端到端案例
+
+针对 `pypa/sampleproject` commit `621e4974ca25`，通过实际浏览器完成仓库导入、Hy3 生成、
+规则评分与 Hy3 语义复核。首次运行发现采集器遗漏 `LICENSE.txt`，导致生成与复核共享错误
+前提；修复并加回归测试后，以同一 commit 重新运行：规则层得到 90/A，语义层得到事实 3、
+蕴含 3、风险完整 3、清晰度 4。语义层还识别到一个“结论有快照信号支持、但引用正文不支持”
+的部分支持案例。完整过程与截图见 `reports/live_ui_e2e.md`。
+
 ## 6. 典型失败模式
 
 ### 6.1 引用幻觉
@@ -114,6 +122,7 @@ Hy3 适合跨多份文档整理证据、生成结构化结论、解释采用条�
 | 合成样本判别力 | 已验证 | `results/evaluation_results.csv` |
 | 确定性重复稳定性 | 已验证 | `results/experiment_summary.json` |
 | 桌面与移动端 UI | 已验证 | 浏览器实测与 `assets/screenshots/` |
+| 外部仓库完整 UI 链路 | 已验证（单案例） | `reports/live_ui_e2e.md` |
 | Docker 镜像运行 | 未验证 | 本机 Docker daemon 未运行 |
 | TokenHub 真实 Hy3 报告 | 已验证（单案例） | `results/live/ed167494e5c6/report.json` |
 | Hy3 语义评审稳定性 | 已验证（单案例 3 次） | `results/live/ed167494e5c6/live_summary.json` |

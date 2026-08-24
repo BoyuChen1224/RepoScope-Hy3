@@ -42,6 +42,8 @@ behavior is inferred to work.
 - [x] **Adversarial validation** - 12/12 constructed attacks rejected below 60 with a hard failure.
 - [x] **One real Hy3 case** - frozen self-repository commit, source manifest, report, deterministic
   score, three semantic results, and summary under `results/live/ed167494e5c6/`.
+- [x] **One external-repository live browser flow** - corrected `pypa/sampleproject` run documented in
+  `reports/live_ui_e2e.md`, including a source-ingestion defect, regression fix, and re-run evidence.
 - [ ] **Human agreement** - not required because repeated-evaluation consistency is complete; an empty
   template and blind annotation protocol are provided, but no human metric is claimed.
 
@@ -64,6 +66,7 @@ behavior is inferred to work.
 - [x] JavaScript syntax check passes.
 - [x] Desktop and 375px mobile browser layouts have no horizontal overflow; demo interaction and
   advisory semantic results render without console errors.
+- [x] A real public repository completed the full browser flow through both evaluation layers.
 - [x] Docker Compose configuration parses.
 - [ ] Docker image runtime - Docker daemon is unavailable on this machine, so runtime remains
   explicitly unverified and is not a competition requirement.
