@@ -1,4 +1,4 @@
-from reposcope.hy3_client import _compact_manifest, _extract_json
+from reposcope.hy3_client import _compact_manifest, _extract_json, _parse_report
 from reposcope.models import EvidenceDocument, RepositoryManifest
 
 
@@ -38,3 +38,25 @@ def test_compact_manifest_prioritizes_tagged_documents_within_budget() -> None:
 
     assert compact["documents"][0]["path"] == "README.md"
     assert compact["context_budget"]["included_excerpt_characters"] <= 10_000
+
+
+def test_parse_report_accepts_explicit_report_wrapper() -> None:
+    payload = {
+        "repository": "metadata outside wrapper",
+        "report": {
+            "repository": "https://github.com/example/project",
+            "commit_sha": "a" * 40,
+            "analysis_goal": "Assess production adoption.",
+            "executive_summary": "Evidence is incomplete.",
+            "decision": "conditional",
+            "decision_confidence": 0.7,
+            "claims": [],
+            "risks": [],
+            "recommendations": [],
+            "unknowns": ["Runtime behavior is not established."],
+        },
+    }
+
+    report = _parse_report(__import__("json").dumps(payload))
+
+    assert report.commit_sha == "a" * 40

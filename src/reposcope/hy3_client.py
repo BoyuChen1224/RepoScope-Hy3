@@ -57,6 +57,34 @@ def _extract_json(content: str) -> str:
     return fenced.group(1) if fenced else stripped
 
 
+def _json_object_candidates(content: str, wrappers: tuple[str, ...]) -> list[dict[str, object]]:
+    parsed = json.loads(_extract_json(content))
+    if not isinstance(parsed, dict):
+        raise ValueError("Hy3 JSON response must be an object.")
+    candidates = [parsed]
+    for wrapper in wrappers:
+        nested = parsed.get(wrapper)
+        if isinstance(nested, dict):
+            candidates.append({**parsed, **nested})
+    return candidates
+
+
+def _parse_report(content: str) -> DueDiligenceReport:
+    candidates = _json_object_candidates(
+        content, ("report", "result", "due_diligence_report", "assessment")
+    )
+    errors: list[Exception] = []
+    for candidate in candidates:
+        try:
+            return DueDiligenceReport.model_validate(candidate)
+        except ValueError as exc:
+            errors.append(exc)
+    keys = sorted(candidates[0])
+    raise ValueError(
+        f"Hy3 report did not match the required schema; top-level keys: {keys}"
+    ) from errors[-1]
+
+
 class Hy3ReportGenerator:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
@@ -92,4 +120,4 @@ class Hy3ReportGenerator:
         content = response.choices[0].message.content
         if not content:
             raise RuntimeError("Hy3 returned an empty report.")
-        return DueDiligenceReport.model_validate_json(_extract_json(content))
+        return _parse_report(content)

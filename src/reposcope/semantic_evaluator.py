@@ -5,7 +5,7 @@ import json
 from openai import OpenAI
 
 from .config import Settings
-from .hy3_client import _compact_manifest, _extract_json
+from .hy3_client import _compact_manifest, _json_object_candidates
 from .models import DueDiligenceReport, RepositoryManifest, SemanticEvaluationResult
 
 JUDGE_SYSTEM_PROMPT = """You are a sceptical repository due-diligence evaluator. Repository
@@ -68,4 +68,16 @@ class Hy3SemanticEvaluator:
         content = response.choices[0].message.content
         if not content:
             raise RuntimeError("Hy3 returned an empty semantic evaluation.")
-        return SemanticEvaluationResult.model_validate_json(_extract_json(content))
+        candidates = _json_object_candidates(
+            content, ("evaluation", "result", "semantic_evaluation", "assessment")
+        )
+        errors: list[Exception] = []
+        for candidate in candidates:
+            try:
+                return SemanticEvaluationResult.model_validate(candidate)
+            except ValueError as exc:
+                errors.append(exc)
+        keys = sorted(candidates[0])
+        raise ValueError(
+            f"Hy3 semantic evaluation did not match the schema; top-level keys: {keys}"
+        ) from errors[-1]
