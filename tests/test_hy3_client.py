@@ -1,4 +1,12 @@
-from reposcope.hy3_client import _compact_manifest, _extract_json, _parse_report
+import json
+from types import SimpleNamespace
+
+from reposcope.hy3_client import (
+    Hy3ReportGenerator,
+    _compact_manifest,
+    _extract_json,
+    _parse_report,
+)
 from reposcope.models import EvidenceDocument, RepositoryManifest
 
 
@@ -60,3 +68,66 @@ def test_parse_report_accepts_explicit_report_wrapper() -> None:
     report = _parse_report(__import__("json").dumps(payload))
 
     assert report.commit_sha == "a" * 40
+
+
+def test_generator_repairs_a_schema_drift_response_once() -> None:
+    invalid = json.dumps(
+        {
+            "repository": "https://github.com/example/project",
+            "commit_sha": "a" * 40,
+            "goal": "Assess production adoption.",
+            "findings": [],
+            "risks": [],
+            "recommendations": [],
+            "unknowns": [],
+        }
+    )
+    valid = json.dumps(
+        {
+            "repository": "https://github.com/example/project",
+            "commit_sha": "a" * 40,
+            "analysis_goal": "Assess production adoption.",
+            "executive_summary": "Evidence is incomplete.",
+            "decision": "conditional",
+            "decision_confidence": 0.7,
+            "claims": [],
+            "risks": [],
+            "recommendations": [],
+            "unknowns": ["Runtime behavior is not established."],
+        }
+    )
+    responses = iter([invalid, valid])
+    calls: list[dict[str, object]] = []
+
+    def create(**kwargs: object) -> SimpleNamespace:
+        calls.append(kwargs)
+        return SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content=next(responses)))]
+        )
+
+    generator = object.__new__(Hy3ReportGenerator)
+    generator.settings = SimpleNamespace(
+        hy3_model="hy3-test",
+        hy3_enable_reasoning_effort=False,
+        hy3_enable_json_response_format=False,
+        reposcope_max_context_chars=10_000,
+    )
+    generator.client = SimpleNamespace(
+        chat=SimpleNamespace(completions=SimpleNamespace(create=create))
+    )
+    manifest = RepositoryManifest(
+        source_url="https://github.com/example/project",
+        commit_sha="a" * 40,
+        inspected_at="2026-08-24T00:00:00+00:00",
+        goal="Assess production adoption.",
+        file_count=0,
+        total_size_bytes=0,
+    )
+
+    report = generator.generate(manifest)
+
+    assert report.analysis_goal == manifest.goal
+    assert len(calls) == 2
+    repair_request = json.loads(calls[1]["messages"][-1]["content"])
+    assert "claims" in repair_request["required_top_level_fields"]
+    assert repair_request["task"].startswith("Repair")

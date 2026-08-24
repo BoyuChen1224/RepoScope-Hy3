@@ -80,6 +80,18 @@ RepoScope 采用五段式流程：
 蕴含 3、风险完整 3、清晰度 4。语义层还识别到一个“结论有快照信号支持、但引用正文不支持”
 的部分支持案例。完整过程与截图见 `reports/live_ui_e2e.md`。
 
+### 5.3 Docker 真实运行验证
+
+在 Docker Desktop 4.76.0 / Engine 29.5.2 上实际构建并运行 Compose 服务。容器以非 root
+`reposcope` 用户运行，只读根文件系统，移除全部 capabilities，并启用
+`no-new-privileges`。健康检查、首页与 OpenAPI 均正常。
+
+容器内对公开 RepoScope 仓库完成 Git 克隆与快照采集，随后真实调用 Hy3 并完成确定性评估：
+固定 commit `cbac872c00cf5481f594d7c2101de0ed5be27caa`，生成 4 条结论、3 项风险和 3 条建议，
+规则层得分 100/A，无硬失败。首次运行还暴露了模型偶发使用 `findings` / `goal` 字段造成
+Schema 拒绝的问题；增加一次严格受限的格式修复重试和回归测试后复跑成功。完整命令、环境与
+结果见 `reports/docker_runtime_validation.md`。
+
 ## 6. 典型失败模式
 
 ### 6.1 引用幻觉
@@ -123,10 +135,10 @@ Hy3 适合跨多份文档整理证据、生成结构化结论、解释采用条�
 | 确定性重复稳定性 | 已验证 | `results/experiment_summary.json` |
 | 桌面与移动端 UI | 已验证 | 浏览器实测与 `assets/screenshots/` |
 | 外部仓库完整 UI 链路 | 已验证（单案例） | `reports/live_ui_e2e.md` |
-| Docker 镜像运行 | 未验证 | 本机 Docker daemon 未运行 |
+| Docker 镜像运行 | 已验证（单次完整流程） | `reports/docker_runtime_validation.md` |
 | TokenHub 真实 Hy3 报告 | 已验证（单案例） | `results/live/ed167494e5c6/report.json` |
 | Hy3 语义评审稳定性 | 已验证（单案例 3 次） | `results/live/ed167494e5c6/live_summary.json` |
 | 双人标注一致性 | 未验证 | 已提供空白模板和标注指南 |
 
-未验证项不会计入当前实验结论。获得有效 API Key 后，应冻结至少一批真实仓库快照，完成
-Hy3 多次生成与评审；提交前再由两名标注者对盲样本独立评分并发布原始标注与仲裁记录。
+未验证项不会计入当前实验结论。后续应扩展真实仓库与容器环境覆盖；如执行可选真人校准，
+应由两名标注者对盲样本独立评分并发布原始标注与仲裁记录。

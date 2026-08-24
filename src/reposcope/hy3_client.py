@@ -90,6 +90,21 @@ class Hy3ReportGenerator:
         self.settings = settings
         self.client = OpenAI(base_url=settings.hy3_base_url, api_key=settings.hy3_api_key)
 
+    def _complete(
+        self, messages: list[dict[str, str]], kwargs: dict[str, object]
+    ) -> str:
+        response = self.client.chat.completions.create(
+            model=self.settings.hy3_model,
+            messages=messages,
+            temperature=0.2,
+            top_p=1.0,
+            **kwargs,
+        )
+        content = response.choices[0].message.content
+        if not content:
+            raise RuntimeError("Hy3 returned an empty report.")
+        return content
+
     def generate(self, manifest: RepositoryManifest) -> DueDiligenceReport:
         user_payload = {
             "task": "Produce a repository adoption due-diligence report for the stated goal.",
@@ -107,17 +122,50 @@ class Hy3ReportGenerator:
             }
         if self.settings.hy3_enable_json_response_format:
             kwargs["response_format"] = {"type": "json_object"}
-        response = self.client.chat.completions.create(
-            model=self.settings.hy3_model,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
-            ],
-            temperature=0.2,
-            top_p=1.0,
-            **kwargs,
-        )
-        content = response.choices[0].message.content
-        if not content:
-            raise RuntimeError("Hy3 returned an empty report.")
-        return _parse_report(content)
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+        ]
+        content = self._complete(messages, kwargs)
+        try:
+            return _parse_report(content)
+        except ValueError:
+            repair_payload = {
+                "task": "Repair the previous response so it passes the required schema.",
+                "instructions": [
+                    "Return one JSON object only.",
+                    "Use the exact top-level field names from output_schema.",
+                    "Use claims, not findings; use analysis_goal, not goal.",
+                    "Preserve only statements supported by the repository snapshot.",
+                ],
+                "required_top_level_fields": [
+                    "repository",
+                    "commit_sha",
+                    "analysis_goal",
+                    "executive_summary",
+                    "decision",
+                    "decision_confidence",
+                    "claims",
+                    "risks",
+                    "recommendations",
+                    "unknowns",
+                ],
+                "output_schema": DueDiligenceReport.model_json_schema(),
+            }
+            repaired_content = self._complete(
+                [
+                    *messages,
+                    {"role": "assistant", "content": content},
+                    {
+                        "role": "user",
+                        "content": json.dumps(repair_payload, ensure_ascii=False),
+                    },
+                ],
+                kwargs,
+            )
+            try:
+                return _parse_report(repaired_content)
+            except ValueError as repair_error:
+                raise ValueError(
+                    "Hy3 report did not match the required schema after one repair attempt."
+                ) from repair_error

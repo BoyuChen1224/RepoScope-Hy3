@@ -62,12 +62,13 @@ behavior is inferred to work.
 ## Verification gates
 
 - [x] Ruff passes.
-- [x] 12 tests pass; coverage remains separately reported rather than treated as proof of untested paths.
+- [x] 13 tests pass; coverage remains separately reported rather than treated as proof of untested paths.
 - [x] JavaScript syntax check passes.
 - [x] Desktop and 375px mobile browser layouts have no horizontal overflow; demo interaction and
   advisory semantic results render without console errors.
 - [x] A real public repository completed the full browser flow through both evaluation layers.
 - [x] Docker Compose configuration parses.
-- [ ] Docker image runtime - Docker daemon is unavailable on this machine, so runtime remains
-  explicitly unverified and is not a competition requirement.
+- [x] Docker image runtime - the hardened Compose service completed health, UI, OpenAPI, repository
+  inspection, real Hy3 generation, and deterministic evaluation checks; see
+  `reports/docker_runtime_validation.md`.
 - [x] GitHub Actions - public CI run `#1` passed on commit `4ef31b3` in 23 seconds.
