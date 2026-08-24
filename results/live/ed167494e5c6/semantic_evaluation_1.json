@@ -1,0 +1,88 @@
+{
+  "evaluator_version": "semantic-1.0",
+  "dimensions": [
+    {
+      "key": "factual_accuracy",
+      "label": "Factual Accuracy",
+      "score": 4.0,
+      "explanation": "All sampled material claims in the report are directly supported by the frozen snapshot: Apache-2.0 license (LICENSE lines 2-4, pyproject.toml line 11), URL/host validation and shell=False git (inspector.py lines 105-117, 120-135), CI ruff/pytest (ci.yml lines 22-25), 84-case zero-variance and 12/12 adversarial detection (experiment_summary.json lines 12-15), and unverified live/Hy3/human items (final_report.md lines 102-105). No claim is contradicted or unsupported.",
+      "evidence": [
+        "LICENSE lines 2-4",
+        "pyproject.toml line 11",
+        "src/reposcope/inspector.py lines 105-117, 120-135",
+        ".github/workflows/ci.yml lines 22-25",
+        "results/experiment_summary.json lines 12-15",
+        "reports/final_report.md lines 102-105"
+      ]
+    },
+    {
+      "key": "evidence_entailment",
+      "label": "Evidence Entailment",
+      "score": 4.0,
+      "explanation": "Every cited excerpt directly supports its associated claim without overreach. License excerpts show Apache-2.0 text and metadata; inspector excerpts show HTTPS-only, allowlist, credential/port rejection, and shell=False; CI excerpt shows lint/test steps; JSON excerpt shows repeat stddev 0.0 and adversarial detection 1.0; final_report table shows unverified rows. Citations are not merely topical.",
+      "evidence": [
+        "LICENSE lines 2-4 + pyproject.toml line 11 -> C001",
+        "inspector.py 105-117 + 120-135 -> C002",
+        "ci.yml 22-25 -> C003",
+        "experiment_summary.json 12-15 -> C004",
+        "final_report.md 102-105 -> C005"
+      ]
+    },
+    {
+      "key": "risk_completeness",
+      "label": "Risk Completeness",
+      "score": 3.0,
+      "explanation": "The report discusses the main visible risks: unverified real-model output (R001), not a complete security scanner (R002), same-model generation/judge bias (R003). Minor risks from the snapshot are omitted, e.g., temporary repo deletion is best-effort not guaranteed (SECURITY.md line 29-30) and semantic judge may share generator biases beyond just scoring override (SECURITY.md line 28). These are minor and do not reverse the main risk posture.",
+      "evidence": [
+        "README.md line 3 + final_report.md line 103 -> R001",
+        "SECURITY.md line 26 + README_CN.md line 93 -> R002",
+        "docs/EVALUATION.md lines 47-49 -> R003"
+      ]
+    },
+    {
+      "key": "professional_clarity",
+      "label": "Professional Clarity",
+      "score": 4.0,
+      "explanation": "The decision (conditional, confidence 0.75), rationale, unknowns (5 explicit items), and next actions (3 recommendations with verification) are unambiguous. The report clearly states the tool is auxiliary not independent, and boundaries are explicit.",
+      "evidence": [
+        "executive_summary + decision + decision_confidence",
+        "unknowns array",
+        "recommendations array"
+      ]
+    }
+  ],
+  "claim_judgements": [
+    {
+      "claim_id": "C001",
+      "verdict": "supported",
+      "explanation": "LICENSE shows Apache License 2.0 text; pyproject.toml declares license Apache-2.0. Permissive reuse is consistent with the license excerpt."
+    },
+    {
+      "claim_id": "C002",
+      "verdict": "supported",
+      "explanation": "inspector.py validate_repository_url enforces HTTPS, allowlist, no credentials/port; _run_git uses shell=False with argument array. Directly observed."
+    },
+    {
+      "claim_id": "C003",
+      "verdict": "supported",
+      "explanation": "ci.yml lines 22-25 show ruff check and pytest with coverage. Matches claim."
+    },
+    {
+      "claim_id": "C004",
+      "verdict": "supported",
+      "explanation": "experiment_summary.json reports repeated_runs_per_case 5, maximum_repeat_stddev 0.0, adversarial_case_count 12, detection_rate 1.0. Matches claim."
+    },
+    {
+      "claim_id": "C005",
+      "verdict": "supported",
+      "explanation": "final_report.md lines 102-105 list Docker, real Hy3 report, semantic stability, and human agreement as unverified. Matches claim (though Docker is also listed, claim focuses on Hy3/human which are present)."
+    }
+  ],
+  "missing_material_risks": [
+    "Best-effort temporary repository deletion after analysis (SECURITY.md lines 29-30) is a minor deployment risk not discussed.",
+    "Semantic judge sharing generator model-family bias is noted in EVALUATION.md but SECURITY.md line 28 also states it may share biases; not separately risked beyond R003."
+  ],
+  "judge_warnings": [
+    "Snapshot evidence is sufficient for claims; however live Hy3 output, human-label agreement, and Docker runtime remain unverified per repo's own final_report.md and cannot be assessed from frozen evidence."
+  ]
+}

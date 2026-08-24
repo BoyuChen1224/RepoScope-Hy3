@@ -1,0 +1,89 @@
+{
+  "evaluator_version": "semantic-1.0",
+  "dimensions": [
+    {
+      "key": "factual_accuracy",
+      "label": "Factual Accuracy",
+      "score": 4.0,
+      "explanation": "所有抽样材料声明均有快照支持且未被反驳：Apache-2.0许可证（LICENSE第2-4行、pyproject.toml第11行）、URL白名单与shell=False（inspector.py第105-117、120-135行）、CI执行ruff与pytest（ci.yml第22-25行）、84样本零方差与12/12对抗拒绝（experiment_summary.json第12-15行）、真实Hy3与标注未验证（final_report.md第102-105行）均与证据一致。",
+      "evidence": [
+        "LICENSE lines 2-4",
+        "pyproject.toml line 11",
+        "src/reposcope/inspector.py lines 105-117, 120-135",
+        ".github/workflows/ci.yml lines 22-25",
+        "results/experiment_summary.json lines 12-15",
+        "reports/final_report.md lines 102-105"
+      ]
+    },
+    {
+      "key": "evidence_entailment",
+      "label": "Evidence Entailment",
+      "score": 4.0,
+      "explanation": "每条claim引用的摘录直接支持其文字：C001引证Apache License文本与声明；C002引证validate_repository_url与_run_git实现；C003引证CI lint/test步骤；C004引证summary字段；C005引证final_report未验证表。无过度引申或主题性引用。",
+      "evidence": [
+        "LICENSE lines 2-4 + pyproject.toml line 11",
+        "src/reposcope/inspector.py lines 105-117 + 120-135",
+        ".github/workflows/ci.yml lines 22-25",
+        "results/experiment_summary.json lines 12-15",
+        "reports/final_report.md lines 102-105"
+      ]
+    },
+    {
+      "key": "risk_completeness",
+      "label": "Risk Completeness",
+      "score": 3.0,
+      "explanation": "报告讨论了快照中可见的主要风险：真实模型输出未验证、非完整安全扫描器、同模型偏差。次要风险如临时克隆删除为best-effort（SECURITY.md第29-30行）、语义评审默认同模型家族偏差已涵盖于R003。未单独列出'公开暴露需认证'（SECURITY.md第4-5行）但R003生产加固建议间接涉及，属轻微遗漏。",
+      "evidence": [
+        "README.md line 3",
+        "reports/final_report.md line 103",
+        "SECURITY.md line 26",
+        "README_CN.md line 93",
+        "docs/EVALUATION.md lines 47-49"
+      ]
+    },
+    {
+      "key": "professional_clarity",
+      "label": "Professional Clarity",
+      "score": 4.0,
+      "explanation": "决策为conditional（置信0.75），executive_summary明确辅助非独立，unknowns列出5项未建立证据，recommendations含动作与验证。读者无需解释即可知结论、边界与下一步。",
+      "evidence": [
+        "executive_summary",
+        "decision: conditional",
+        "unknowns array",
+        "recommendations array"
+      ]
+    }
+  ],
+  "claim_judgements": [
+    {
+      "claim_id": "C001",
+      "verdict": "supported",
+      "explanation": "LICENSE与pyproject.toml均确认Apache-2.0，企业使用修改再分发权利由许可证正文授予，声明准确。"
+    },
+    {
+      "claim_id": "C002",
+      "verdict": "supported",
+      "explanation": "inspector.py代码显示仅接受https、检查allowlist、拒绝凭据/端口，且git调用shell=False，与声明一致。"
+    },
+    {
+      "claim_id": "C003",
+      "verdict": "supported",
+      "explanation": "ci.yml明确运行ruff check与pytest覆盖，声明获直接支持。"
+    },
+    {
+      "claim_id": "C004",
+      "verdict": "supported",
+      "explanation": "experiment_summary.json记录maximum_repeat_stddev 0.0与adversarial_detection_rate 1.0（12例），声明准确。"
+    },
+    {
+      "claim_id": "C005",
+      "verdict": "supported",
+      "explanation": "final_report.md表明确Docker运行、真实Hy3报告、语义稳定性、双人标注均为未验证，声明与证据一致。"
+    }
+  ],
+  "missing_material_risks": [],
+  "judge_warnings": [
+    "快照未包含真实Hy3 API调用或人类标注结果，故报告对真实输出的断言均基于项目自述的'未验证'状态，无法独立证实其生成质量。",
+    "仓库默认仅允许github.com主机（config.py），非GitHub公开HTTPS场景适用性未被评估，企业若需其他源需改配置。"
+  ]
+}

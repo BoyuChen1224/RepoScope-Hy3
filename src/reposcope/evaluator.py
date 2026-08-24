@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from .models import (
     DueDiligenceReport,
     EvaluationDimension,
@@ -18,6 +20,14 @@ def _score_ratio(ratio: float) -> float:
     if ratio >= 0.30:
         return 1.0
     return 0.0
+
+
+def _normalize_text(value: str) -> str:
+    return " ".join(value.split()).casefold()
+
+
+def _excerpt_source_text(excerpt: str) -> str:
+    return "\n".join(re.sub(r"^\d+:\s?", "", line) for line in excerpt.splitlines())
 
 
 def evaluate_report(manifest: RepositoryManifest, report: DueDiligenceReport) -> EvaluationResult:
@@ -40,8 +50,8 @@ def evaluate_report(manifest: RepositoryManifest, report: DueDiligenceReport) ->
                 invalid_details.append(f"{item.id}: line range exceeds {ref.path}")
                 continue
             valid_refs += 1
-            normalized_quote = " ".join(ref.quote.split()).casefold()
-            normalized_excerpt = " ".join(document.excerpt.split()).casefold()
+            normalized_quote = _normalize_text(ref.quote)
+            normalized_excerpt = _normalize_text(_excerpt_source_text(document.excerpt))
             if normalized_quote and normalized_quote in normalized_excerpt:
                 exact_quotes += 1
 

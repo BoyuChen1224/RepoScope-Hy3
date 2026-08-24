@@ -1,0 +1,184 @@
+{
+  "report_version": "1.0",
+  "repository": "https://github.com/BoyuChen1224/RepoScope-Hy3",
+  "commit_sha": "ed167494e5c6107b56a110fe65f3d49ee72833e7",
+  "analysis_goal": "评估 RepoScope Hy3 是否适合作为企业研发团队进行开源项目采用前技术尽调的工具。",
+  "executive_summary": "RepoScope Hy3 是一个强调证据可追溯性的开源项目技术尽调助手，具备确定性评估器、安全克隆约束、Apache-2.0 许可证与 CI 测试。其确定性评估层在 84 个合成样本上可复现且能拒绝伪造引用，但真实 Hy3 输出质量、人类标注一致性与 Docker 生产运行均未验证，仅适合作为辅助尽调工具而非独立决策系统。",
+  "decision": "conditional",
+  "decision_confidence": 0.75,
+  "claims": [
+    {
+      "id": "C001",
+      "category": "license",
+      "text": "项目以 Apache-2.0 许可证发布，允许企业自由使用、修改和再分发。",
+      "confidence": 0.98,
+      "evidence": [
+        {
+          "path": "LICENSE",
+          "line_start": 2,
+          "line_end": 4,
+          "quote": "                                 Apache License\n                           Version 2.0, January 2004\n                         http://www.apache.org/licenses/"
+        },
+        {
+          "path": "pyproject.toml",
+          "line_start": 11,
+          "line_end": 11,
+          "quote": "license = { text = \"Apache-2.0\" }"
+        }
+      ]
+    },
+    {
+      "id": "C002",
+      "category": "security",
+      "text": "仓库检查器仅接受白名单 HTTPS Git 主机，拒绝凭据与自定义端口，并使用参数数组调用 git（shell=False）。",
+      "confidence": 0.95,
+      "evidence": [
+        {
+          "path": "src/reposcope/inspector.py",
+          "line_start": 105,
+          "line_end": 117,
+          "quote": "def validate_repository_url(raw_url: str, allowed_hosts: tuple[str, ...]) -> str:\n    parsed = urlparse(raw_url)\n    if parsed.scheme != \"https\" or not parsed.hostname:\n        raise InspectionError(\"Only explicit HTTPS repository URLs are accepted.\")\n    host = parsed.hostname.lower()\n    if host not in allowed_hosts:\n        raise InspectionError(f\"Repository host '{host}' is not in the allowlist.\")\n    if parsed.username or parsed.password or parsed.port:\n        raise InspectionError(\"Credentials and custom ports are not accepted in repository URLs.\")"
+        },
+        {
+          "path": "src/reposcope/inspector.py",
+          "line_start": 120,
+          "line_end": 135,
+          "quote": "def _run_git(args: list[str], cwd: Path | None, timeout: int) -> str:\n    git_executable = shutil.which(\"git\")\n    if not git_executable:\n        raise InspectionError(\"Git is required for repository inspection.\")\n    # All call sites supply fixed arguments or a URL that passed the strict GitHub allowlist.\n    result = subprocess.run(  # noqa: S603\n        [git_executable, *args],\n        cwd=cwd,\n        capture_output=True,\n        text=True,\n        encoding=\"utf-8\",\n        errors=\"replace\",\n        timeout=timeout,\n        check=False,\n        shell=False,\n    )"
+        }
+      ]
+    },
+    {
+      "id": "C003",
+      "category": "testing",
+      "text": "项目配置了 CI 工作流，执行 ruff 检查和 pytest 测试覆盖。",
+      "confidence": 0.9,
+      "evidence": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "line_start": 22,
+          "line_end": 25,
+          "quote": "      - name: Lint\n        run: python -m ruff check .\n      - name: Test\n        run: python -m pytest --cov=reposcope --cov-report=term-missing"
+        }
+      ]
+    },
+    {
+      "id": "C004",
+      "category": "evaluation",
+      "text": "确定性评估器在 84 个合成样本上实现零方差重复评分，并拒绝 12/12 对抗样本。",
+      "confidence": 0.85,
+      "evidence": [
+        {
+          "path": "results/experiment_summary.json",
+          "line_start": 12,
+          "line_end": 15,
+          "quote": "  \"repeated_runs_per_case\": 5,\n  \"maximum_repeat_stddev\": 0.0,\n  \"adversarial_case_count\": 12,\n  \"adversarial_detection_rate\": 1.0,"
+        }
+      ]
+    },
+    {
+      "id": "C005",
+      "category": "limitation",
+      "text": "真实 Hy3 报告生成、语义评审稳定性与双人标注一致性在当前仓库中均未验证。",
+      "confidence": 0.9,
+      "evidence": [
+        {
+          "path": "reports/final_report.md",
+          "line_start": 102,
+          "line_end": 105,
+          "quote": "| Docker 镜像运行 | 未验证 | 本机 Docker daemon 未运行 |\n| TokenHub 真实 Hy3 报告 | 未验证 | 当前环境尚未配置有效 API Key |\n| Hy3 语义评审稳定性 | 未验证 | 依赖有效 API Key 与重复调用 |\n| 双人标注一致性 | 未验证 | 已提供空白模板和标注指南 |"
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "id": "R001",
+      "severity": "medium",
+      "title": "真实模型输出未验证",
+      "description": "项目自述为独立活动作品而非官方发布，且真实 Hy3 API 调用与语义评审稳定性尚未验证，企业无法直接确认生成报告质量。",
+      "evidence": [
+        {
+          "path": "README.md",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "> An independent Rhinoceros Bird practice project. This repository is not an official Tencent release."
+        },
+        {
+          "path": "reports/final_report.md",
+          "line_start": 103,
+          "line_end": 103,
+          "quote": "| TokenHub 真实 Hy3 报告 | 未验证 | 当前环境尚未配置有效 API Key |"
+        }
+      ]
+    },
+    {
+      "id": "R002",
+      "severity": "high",
+      "title": "非完整安全扫描器",
+      "description": "项目明确声明不是完整的代码安全扫描器，也不能证明被分析项目不存在漏洞；静态密钥模式扫描不等于完整安全评估。",
+      "evidence": [
+        {
+          "path": "SECURITY.md",
+          "line_start": 26,
+          "line_end": 26,
+          "quote": "- Static secret-pattern scanning is not a complete security scan."
+        },
+        {
+          "path": "README_CN.md",
+          "line_start": 93,
+          "line_end": 93,
+          "quote": "该项目不是完整的代码安全扫描器，也不能证明被分析项目不存在漏洞。生产部署前请阅读"
+        }
+      ]
+    },
+    {
+      "id": "R003",
+      "severity": "medium",
+      "title": "同模型生成与评审偏差",
+      "description": "默认情况下 Hy3 同时承担报告生成与可选语义评审，可能共享偏好与遗漏；系统虽不允许语义得分覆盖硬门槛，但偏差风险仍存在。",
+      "evidence": [
+        {
+          "path": "docs/EVALUATION.md",
+          "line_start": 47,
+          "line_end": 49,
+          "quote": "This semantic score is advisory until calibrated against blinded human labels. Using the same model\nfamily to generate and judge an answer can introduce correlated bias; the deterministic hard failures\ntherefore remain authoritative, and the UI must not silently replace them with a semantic score."
+        }
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "title": "使用真实仓库进行端到端验证",
+      "action": "配置有效 HY3_API_KEY 后运行 scripts/run_live_case.py 对本仓库或目标开源项目生成真实报告与语义评审。",
+      "verification": "检查 results/live/<sha>/ 下 manifest.json、report.json、deterministic_evaluation.json 与 semantic_evaluation_*.json 是否成功生成且硬门槛未被伪造引用绕过。",
+      "related_paths": [
+        "scripts/run_live_case.py",
+        "src/reposcope/config.py"
+      ]
+    },
+    {
+      "title": "补充双人盲标一致性实验",
+      "action": "依据 docs/ANNOTATION_GUIDE.md 对冻结真实快照完成至少两批独立人工标注与仲裁记录。",
+      "verification": "确认仓库中出现两个真实标注集与仲裁笔记，且 docs/ANNOTATION_GUIDE.md 中声明的空模板状态被更新。",
+      "related_paths": [
+        "docs/ANNOTATION_GUIDE.md"
+      ]
+    },
+    {
+      "title": "生产部署前加固",
+      "action": "按 SECURITY.md 与 compose.yml 增加认证、速率限制、网络出口控制，并使用隔离临时 worker 执行克隆。",
+      "verification": "审查 compose.yml 的 read_only、cap_drop 配置及 SECURITY.md 的部署清单是否落地，并做渗透测试。",
+      "related_paths": [
+        "compose.yml",
+        "SECURITY.md"
+      ]
+    }
+  ],
+  "unknowns": [
+    "真实 Hy3 模型在企业网络环境下生成报告的事实准确性与引文落地率未建立（无有效 API Key 调用证据）。",
+    "Docker 镜像在目标企业环境中的实际运行稳定性未验证（final_report.md 记录本机 daemon 未运行）。",
+    "人类标注一致性加权 kappa 数值不存在（仅提供空白模板与指南，无已完成标注集）。",
+    "被分析项目若含非 GitHub 公开 HTTPS 主机时的适用性未覆盖（config.py 默认仅允许 github.com）。",
+    "企业采用时的数据出境与合规要求（如 tokenhub.tencentmaas.com 端点）未在本快照中评估。"
+  ]
+}

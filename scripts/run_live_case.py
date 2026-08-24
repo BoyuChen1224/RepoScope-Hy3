@@ -104,6 +104,7 @@ def main() -> None:
         "reasoning_effort_enabled": settings.hy3_enable_reasoning_effort,
         "context_character_budget": settings.reposcope_max_context_chars,
         "generation_seconds": round(generation_seconds, 3),
+        "deterministic_evaluator_version": deterministic.evaluator_version,
         "deterministic_total_score": deterministic.total_score,
         "deterministic_grade": deterministic.grade,
         "deterministic_hard_failures": deterministic.hard_failures,

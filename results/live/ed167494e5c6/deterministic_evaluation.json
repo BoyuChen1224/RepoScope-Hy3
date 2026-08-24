@@ -1,0 +1,57 @@
+{
+  "evaluator_version": "1.1",
+  "total_score": 100.0,
+  "grade": "A",
+  "dimensions": [
+    {
+      "key": "traceability",
+      "label": "Evidence traceability",
+      "score": 4.0,
+      "explanation": "5/5 factual claims include evidence.",
+      "evidence": []
+    },
+    {
+      "key": "reference_validity",
+      "label": "Reference validity",
+      "score": 4.0,
+      "explanation": "12/12 references point to an existing in-range source.",
+      "evidence": []
+    },
+    {
+      "key": "quote_grounding",
+      "label": "Quote grounding",
+      "score": 4.0,
+      "explanation": "12/12 evidence quotes are found in captured excerpts.",
+      "evidence": []
+    },
+    {
+      "key": "uncertainty",
+      "label": "Uncertainty disclosure",
+      "score": 4.0,
+      "explanation": "The report records 5 explicit unknowns.",
+      "evidence": []
+    },
+    {
+      "key": "actionability",
+      "label": "Recommendation actionability",
+      "score": 4.0,
+      "explanation": "3/3 recommendations include both an action and a verification method.",
+      "evidence": []
+    },
+    {
+      "key": "schema",
+      "label": "Format compliance",
+      "score": 4.0,
+      "explanation": "The output passed the versioned Pydantic report schema.",
+      "evidence": []
+    }
+  ],
+  "hard_failures": [],
+  "diagnostics": {
+    "claim_count": 5,
+    "reference_count": 12,
+    "traceability_ratio": 1.0,
+    "valid_reference_ratio": 1.0,
+    "exact_quote_ratio": 1.0
+  }
+}

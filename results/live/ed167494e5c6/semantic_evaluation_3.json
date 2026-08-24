@@ -1,0 +1,92 @@
+{
+  "evaluator_version": "semantic-1.0",
+  "dimensions": [
+    {
+      "key": "factual_accuracy",
+      "label": "Factual Accuracy",
+      "score": 4.0,
+      "explanation": "所有抽样材料声明均有快照支持且未被反驳：Apache-2.0许可证（LICENSE第2-4行、pyproject.toml第11行）、URL白名单与shell=False（inspector.py第105-117、120-135行）、CI执行ruff与pytest（ci.yml第22-25行）、84样本零方差与12/12对抗拒绝（experiment_summary.json第12-15行）、真实Hy3与标注未验证（final_report.md第102-105行）、非完整安全扫描（SECURITY.md第26行、README_CN.md第93行）、同模型偏差（EVALUATION.md第47-49行）均准确对应证据。",
+      "evidence": [
+        "LICENSE lines 2-4",
+        "pyproject.toml line 11",
+        "src/reposcope/inspector.py lines 105-117, 120-135",
+        ".github/workflows/ci.yml lines 22-25",
+        "results/experiment_summary.json lines 12-15",
+        "reports/final_report.md lines 102-105",
+        "SECURITY.md line 26",
+        "README_CN.md line 93",
+        "docs/EVALUATION.md lines 47-49"
+      ]
+    },
+    {
+      "key": "evidence_entailment",
+      "label": "Evidence Entailment",
+      "score": 4.0,
+      "explanation": "每条引用的摘录直接支持对应声明，无过度引申：许可证文本直接证明Apache-2.0；inspector代码直接显示HTTPS仅允许、拒绝凭据/端口及shell=False；CI摘录显示lint与test命令；JSON摘录显示重复标准差与对抗检测率；final_report表格显示未验证项；SECURITY/README_CN明确非完整扫描；EVALUATION说明同模型偏差。所有引用均为支持性而非仅主题相关。",
+      "evidence": [
+        "LICENSE lines 2-4 + pyproject.toml line 11 -> C001",
+        "inspector.py 105-117 + 120-135 -> C002",
+        "ci.yml 22-25 -> C003",
+        "experiment_summary.json 12-15 -> C004",
+        "final_report.md 102-105 -> C005",
+        "README.md line 3 + final_report.md 103 -> R001",
+        "SECURITY.md 26 + README_CN.md 93 -> R002",
+        "EVALUATION.md 47-49 -> R003"
+      ]
+    },
+    {
+      "key": "risk_completeness",
+      "label": "Risk Completeness",
+      "score": 3.0,
+      "explanation": "报告讨论了快照中可见的主要风险：真实模型输出未验证、非完整安全扫描、同模型生成/评审偏差。次要风险如临时克隆删除为尽力而为（SECURITY.md第29-30行）、语义评审默认同模型家族可能共享偏差已涵盖，但未显式提及'缺失文件不等于无控制'（SECURITY.md第27行）及'公开暴露需认证'（SECURITY.md第4-5行）等部署边界，属轻微遗漏。无主要风险被逆转或隐瞒。",
+      "evidence": [
+        "SECURITY.md lines 4-5, 26-30",
+        "reports/final_report.md lines 82-85, 102-105",
+        "docs/EVALUATION.md lines 47-49"
+      ]
+    },
+    {
+      "key": "professional_clarity",
+      "label": "Professional Clarity",
+      "score": 4.0,
+      "explanation": "决策（conditional）、置信度（0.75）、未知项（5条明确列出）、后续动作（3条带验证方法的建议）均无歧义；执行摘要清晰界定工具定位与未验证边界，读者无需推测即可理解适用条件与限制。",
+      "evidence": [
+        "report executive_summary, decision, unknowns, recommendations"
+      ]
+    }
+  ],
+  "claim_judgements": [
+    {
+      "claim_id": "C001",
+      "verdict": "supported",
+      "explanation": "LICENSE与pyproject.toml直接表明Apache-2.0，企业使用修改再分发权利由许可证正文授予。"
+    },
+    {
+      "claim_id": "C002",
+      "verdict": "supported",
+      "explanation": "inspector.py代码明确仅接受HTTPS、拒绝凭据/端口、以参数数组且shell=False调用git。"
+    },
+    {
+      "claim_id": "C003",
+      "verdict": "supported",
+      "explanation": "ci.yml显示Lint与Test步骤分别运行ruff check与pytest覆盖。"
+    },
+    {
+      "claim_id": "C004",
+      "verdict": "supported",
+      "explanation": "experiment_summary.json列明5次重复最大标准差0.0、对抗12例检测率1.0。"
+    },
+    {
+      "claim_id": "C005",
+      "verdict": "supported",
+      "explanation": "final_report.md表格记录Docker、真实Hy3、语义稳定性、双人标注均为未验证。"
+    }
+  ],
+  "missing_material_risks": [
+    "未显式提及：公开暴露需认证与网络出口控制（SECURITY.md第4-5行）的部署风险；缺失文件不等于无策略（SECURITY.md第27行）的误读风险。"
+  ],
+  "judge_warnings": [
+    "快照中未包含真实Hy3 API调用证据，报告对真实输出的断言均基于项目自述的'未验证'状态，符合证据边界。",
+    "评估仅基于提交快照的29个含摘录文档，未运行live case，无法核实生成质量。"
+  ]
+}

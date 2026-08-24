@@ -106,7 +106,7 @@ class EvaluationDimension(BaseModel):
 
 
 class EvaluationResult(BaseModel):
-    evaluator_version: str = "1.0"
+    evaluator_version: str = "1.1"
     total_score: float = Field(ge=0, le=100)
     grade: str
     dimensions: list[EvaluationDimension]

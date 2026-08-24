@@ -106,3 +106,63 @@ def test_evaluator_caps_fabricated_references() -> None:
 
     assert result.total_score <= 59
     assert result.hard_failures
+
+
+def test_evaluator_ignores_display_line_prefixes_in_multiline_quotes() -> None:
+    manifest = RepositoryManifest(
+        source_url="https://github.com/example/project",
+        commit_sha="a" * 40,
+        inspected_at="2026-08-24T00:00:00+00:00",
+        goal="Assess production adoption.",
+        file_count=1,
+        total_size_bytes=50,
+        documents=[
+            EvidenceDocument(
+                path="src/demo.py",
+                sha256="b" * 64,
+                size_bytes=50,
+                line_count=3,
+                excerpt="1: def run():\n2:     return True\n3: ",
+            )
+        ],
+    )
+    report = DueDiligenceReport.model_validate(
+        {
+            "repository": manifest.source_url,
+            "commit_sha": manifest.commit_sha,
+            "analysis_goal": manifest.goal,
+            "executive_summary": "A function returns true.",
+            "decision": "conditional",
+            "decision_confidence": 0.8,
+            "claims": [
+                {
+                    "id": "C001",
+                    "category": "code",
+                    "text": "The function returns true.",
+                    "confidence": 0.9,
+                    "evidence": [
+                        {
+                            "path": "src/demo.py",
+                            "line_start": 1,
+                            "line_end": 2,
+                            "quote": "def run():\n    return True",
+                        }
+                    ],
+                }
+            ],
+            "risks": [],
+            "recommendations": [
+                {
+                    "title": "Verify behavior",
+                    "action": "Run the function test.",
+                    "verification": "Confirm the test exits successfully.",
+                }
+            ],
+            "unknowns": ["Runtime environment is not established."],
+        }
+    )
+
+    result = evaluate_report(manifest, report)
+
+    assert result.diagnostics["exact_quote_ratio"] == 1.0
+    assert not result.hard_failures

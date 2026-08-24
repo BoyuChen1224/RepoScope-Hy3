@@ -92,7 +92,7 @@ def main() -> None:
         for quality in ("good", "medium", "bad")
     }
     summary = {
-        "evaluator_version": "1.0",
+        "evaluator_version": "1.1",
         "case_count": len(rows),
         "quality_ladder_families": len(family_scores),
         "quality_ladder_order_accuracy": ladder_correct / len(family_scores),

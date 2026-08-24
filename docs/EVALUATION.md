@@ -6,7 +6,7 @@ The evaluator measures whether a repository adoption report is auditable and use
 engineering decision. It does not attempt to prove that a repository is secure. The unit of review is
 a report generated against one immutable repository commit.
 
-## Deterministic rubric v1.0
+## Deterministic rubric v1.1
 
 Each dimension is scored from 0 to 4 using explicit thresholds.
 
@@ -22,6 +22,9 @@ Each dimension is scored from 0 to 4 using explicit thresholds.
 The weighted score is normalized to 100. Evidence validity and quote grounding together contribute
 43%, preventing fluent writing from dominating source quality. The score is capped at 59 if more than
 20% of evidence references are invalid or quote grounding falls below 60%.
+
+Version 1.1 removes display-only line-number prefixes from captured excerpts before exact quote
+comparison. Paths and cited line ranges remain checked against the original document metadata.
 
 ## Validity experiments
 

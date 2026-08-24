@@ -21,7 +21,7 @@ Chinese documentation: [README_CN.md](README_CN.md)
 
 ## Verified result boundary
 
-Deterministic evaluator v1.0 has been executed on 84 synthetic cases: 24 good/medium/bad families
+Deterministic evaluator v1.1 has been executed on 84 synthetic cases: 24 good/medium/bad families
 were ordered correctly, 12/12 adversarial cases were rejected, and five repeated runs per case had
 zero score variance. Mean scores were 100.0, 61.5, and 18.5 for designed good, medium, and bad outputs.
 
@@ -29,6 +29,11 @@ This establishes deterministic behavior on constructed fixtures only. It does no
 agreement or live Hy3-output validity. See [`reports/benchmark_analysis.md`](reports/benchmark_analysis.md).
 The broader scenario and capability-boundary analysis is in
 [`reports/final_report.md`](reports/final_report.md).
+
+A live self-repository case at commit `ed167494e5c6` is also published under `results/live/`: Hy3
+generated five grounded claims and three risks in 20.523 seconds; deterministic evaluator v1.1 scored
+100 with 12/12 grounded references. Three semantic re-evaluations produced zero per-dimension score
+variance. This is one real case, not a substitute for a broader live set or human agreement.
 
 ## Status
 
