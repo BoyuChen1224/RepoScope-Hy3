@@ -5,6 +5,7 @@ const emptyState = document.querySelector("#emptyState");
 const results = document.querySelector("#results");
 const toast = document.querySelector("#toast");
 const generateButton = document.querySelector("#generateButton");
+const judgeButton = document.querySelector("#judgeButton");
 let activeManifest = null;
 let activeReport = null;
 
@@ -60,6 +61,8 @@ function renderManifest(manifest, score = null) {
   document.querySelector("#resultCallout").textContent = warning;
   document.querySelector("#reportView").classList.add("hidden");
   document.querySelector("#scoreBreakdown").classList.add("hidden");
+  document.querySelector("#semanticActions").classList.add("hidden");
+  document.querySelector("#semanticView").classList.add("hidden");
   generateButton.classList.remove("hidden");
 }
 
@@ -99,6 +102,18 @@ function renderEvaluation(evaluation) {
   if (evaluation.hard_failures.length) {
     document.querySelector("#resultCallout").textContent = `硬门槛触发：${evaluation.hard_failures.join(" ")}`;
   }
+  document.querySelector("#semanticActions").classList.remove("hidden");
+}
+
+function renderSemanticEvaluation(evaluation) {
+  document.querySelector("#semanticView").classList.remove("hidden");
+  document.querySelector("#semanticDimensionList").innerHTML = evaluation.dimensions.map(item =>
+    `<div class="dimension-row"><span>${escapeHtml(item.label)}</span><div class="dimension-bar"><i style="width:${Math.max(0, Math.min(100, Number(item.score) / 4 * 100))}%"></i></div><strong>${Number(item.score).toFixed(1)}</strong></div>`
+  ).join("");
+  document.querySelector("#judgementList").innerHTML = evaluation.claim_judgements.map(item =>
+    `<article class="judgement"><strong>${escapeHtml(item.claim_id)}</strong><em>${escapeHtml(item.verdict)}</em><p>${escapeHtml(item.explanation)}</p></article>`
+  ).join("");
+  document.querySelector("#semanticView").scrollIntoView({behavior: "smooth", block: "nearest"});
 }
 
 async function checkHealth() {
@@ -170,6 +185,16 @@ demoButton.addEventListener("click", () => {
     {label: "Quote grounding", score: 3}, {label: "Uncertainty disclosure", score: 4},
     {label: "Recommendation actionability", score: 4}, {label: "Format compliance", score: 4},
   ]});
+  renderSemanticEvaluation({
+    dimensions: [
+      {label: "Factual accuracy", score: 4}, {label: "Evidence entailment", score: 4},
+      {label: "Risk completeness", score: 3}, {label: "Professional clarity", score: 4},
+    ],
+    claim_judgements: [
+      {claim_id: "C001", verdict: "supported", explanation: "CI 文件与测试目录共同支持该结论。"},
+      {claim_id: "C002", verdict: "supported", explanation: "顶层许可证文件直接支持该结论。"},
+    ],
+  });
   notify("已载入固定演示样本，不消耗 Hy3 API 配额。");
 });
 
@@ -198,6 +223,27 @@ generateButton.addEventListener("click", async () => {
   } finally {
     generateButton.disabled = false;
     generateButton.querySelector("span").textContent = "重新调用 Hy3 生成报告";
+  }
+});
+
+judgeButton.addEventListener("click", async () => {
+  if (!activeManifest || !activeReport) return;
+  judgeButton.disabled = true;
+  judgeButton.textContent = "Hy3 正在进行语义复核…";
+  try {
+    const response = await fetch("/api/evaluations/judge", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({manifest: activeManifest, report: activeReport}),
+    });
+    const evaluation = await response.json();
+    if (!response.ok) throw new Error(evaluation.detail || "Hy3 语义复核失败");
+    renderSemanticEvaluation(evaluation);
+    notify("语义复核完成；规则层硬门槛仍保持优先。 ");
+  } catch (error) {
+    notify(error.message);
+  } finally {
+    judgeButton.disabled = false;
+    judgeButton.textContent = "重新运行 Hy3 语义复核";
   }
 });
 

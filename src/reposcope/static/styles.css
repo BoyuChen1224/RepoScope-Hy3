@@ -119,6 +119,14 @@ button:disabled { cursor: wait; opacity: .55; transform: none; }
 .score-breakdown { margin-top: 24px; }
 .dimension-row { display: grid; grid-template-columns: 150px 1fr 34px; align-items: center; gap: 10px; margin: 10px 0; color: var(--muted); font-size: 10px; }
 .dimension-bar { height: 5px; background: #2a302d; overflow: hidden; }.dimension-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--cyan), var(--lime)); }
+.semantic-actions { display: flex; align-items: center; gap: 14px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.semantic-actions p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.semantic-view { margin-top: 22px; padding: 18px; background: rgba(88,230,208,.045); border: 1px solid rgba(88,230,208,.16); }
+.semantic-view .section-title { margin-top: 0; }.semantic-view .section-title span { color: var(--cyan); letter-spacing: .1em; }
+.judgement-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 18px; }
+.judgement { padding: 10px 11px; background: #0d1110; }
+.judgement strong { color: #e1e3df; font-size: 10px; }.judgement em { float: right; color: var(--cyan); font-size: 9px; font-style: normal; text-transform: uppercase; }
+.judgement p { margin: 5px 0 0; color: var(--muted); font-size: 9px; line-height: 1.45; }
 
 .method { display: grid; grid-template-columns: .75fr 1.25fr; gap: 70px; padding: 76px 0 92px; border-top: 1px solid var(--line); }
 .method-intro h2 { margin: 16px 0 18px; font-size: 36px; letter-spacing: -.045em; line-height: 1.15; }.method-intro p { color: var(--muted); line-height: 1.7; }
@@ -135,6 +143,7 @@ footer { display: flex; justify-content: space-between; padding: 24px 0 40px; bo
   .hero { padding-top: 60px; }.hero-stats { flex-wrap: wrap; gap: 20px 30px; }
   .signal-grid { grid-template-columns: repeat(2, 1fr); }.method { gap: 35px; }
   .report-summary, .report-columns { grid-template-columns: 1fr; }
+  .judgement-list { grid-template-columns: 1fr; }
 }
 @media (max-width: 540px) {
   .topbar, main, footer { width: min(100% - 24px, 1180px); }

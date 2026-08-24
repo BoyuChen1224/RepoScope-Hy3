@@ -49,7 +49,8 @@ def main() -> None:
         (before, 570, "固定 commit，建立受限证据快照", "02"),
         (after, 560, "采集 README、许可证、测试与 CI 信号", "03"),
         (after, 1040, "Hy3 输出结论、风险、未知项与逐条引用", "04"),
-        (after, 1630, "评估器验证证据，并展示六维得分与硬门槛", "05"),
+        (after, 1550, "规则层验证证据，并展示六维得分与硬门槛", "05"),
+        (after, 2070, "Hy3 语义复核逐条判断事实与证据蕴含", "06"),
     ]
     frames = [frame(*specification) for specification in specifications]
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
@@ -57,7 +58,7 @@ def main() -> None:
         OUTPUT,
         save_all=True,
         append_images=frames[1:],
-        duration=[1700, 1800, 1900, 2300, 2600],
+        duration=[1700, 1800, 1900, 2300, 2300, 2500],
         loop=0,
         optimize=True,
     )
