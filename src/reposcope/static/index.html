@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="RepoScope Hy3 - evidence-grounded repository due diligence" />
+    <title>RepoScope Hy3</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <div class="grain"></div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="RepoScope Hy3 首页">
+        <span class="brand-mark">R</span>
+        <span>RepoScope <em>Hy3</em></span>
+      </a>
+      <div class="top-meta">
+        <span class="status-dot"></span>
+        <span id="apiStatus">正在连接评估器</span>
+        <a href="/docs" target="_blank" rel="noreferrer">API</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">Evidence before confidence</div>
+        <h1>让每个采用结论<br /><span>都有证据可查。</span></h1>
+        <p class="hero-copy">
+          Hy3 阅读真实仓库，生成技术尽调报告。RepoScope 验证文件、行号与原文，
+          把“看起来可信”变成“可以审计”。
+        </p>
+        <div class="hero-stats" aria-label="系统能力摘要">
+          <div><strong>6</strong><span>确定性评估维度</span></div>
+          <div><strong>100%</strong><span>结论级证据链</span></div>
+          <div><strong>0</strong><span>密钥进入浏览器</span></div>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="仓库分析工作台">
+        <div class="panel input-panel">
+          <div class="panel-heading">
+            <span class="step">01</span>
+            <div>
+              <h2>定义采用决策</h2>
+              <p>系统会固定当前 commit，避免证据随时间漂移。</p>
+            </div>
+          </div>
+          <form id="analysisForm">
+            <label for="repoUrl">公开 GitHub 仓库</label>
+            <div class="url-field">
+              <span aria-hidden="true">⌁</span>
+              <input
+                id="repoUrl"
+                type="url"
+                value="https://github.com/BoyuChen1224/RepoScope-Hy3"
+                required
+              />
+            </div>
+            <label for="goal">你准备如何使用它？</label>
+            <textarea id="goal" rows="4" required>评估该项目是否适合在企业研发团队中用于开源项目采用前的技术尽调。</textarea>
+            <div class="form-actions">
+              <button class="primary" type="submit" id="runButton">
+                <span>开始证据审查</span><span aria-hidden="true">→</span>
+              </button>
+              <button class="secondary" type="button" id="demoButton">载入演示结果</button>
+            </div>
+          </form>
+          <p class="privacy-note">仓库内容仅在本次分析进程中使用，临时克隆会在检查后删除。</p>
+        </div>
+
+        <div class="panel result-panel" id="resultPanel">
+          <div class="empty-state" id="emptyState">
+            <div class="scope-graphic"><i></i><i></i><i></i></div>
+            <h2>等待仓库快照</h2>
+            <p>检查完成后，这里会显示证据覆盖、风险信号与评估得分。</p>
+          </div>
+          <div class="results hidden" id="results">
+            <div class="result-head">
+              <div>
+                <span class="result-kicker">Snapshot locked</span>
+                <h2 id="resultRepo">repository</h2>
+                <code id="resultSha">commit</code>
+              </div>
+              <div class="score-ring" style="--score: 86">
+                <strong id="resultScore">86</strong><span>/100</span>
+              </div>
+            </div>
+            <div class="signal-grid" id="signalGrid"></div>
+            <div class="evidence-section">
+              <div class="section-title"><h3>证据清单</h3><span id="evidenceCount"></span></div>
+              <div class="evidence-list" id="evidenceList"></div>
+            </div>
+            <div class="callout" id="resultCallout"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="method">
+        <div class="method-intro">
+          <span class="step">02</span>
+          <h2>一个总分不够。<br />我们展示分数从哪里来。</h2>
+          <p>规则检查负责客观事实，Hy3 负责语义判断，人工标注负责校准边界。</p>
+        </div>
+        <div class="dimension-list">
+          <article><span>01</span><h3>证据覆盖</h3><p>关键结论是否给出来源</p></article>
+          <article><span>02</span><h3>引用有效</h3><p>文件与行号是否真实存在</p></article>
+          <article><span>03</span><h3>原文落地</h3><p>引用文本是否能在快照中找到</p></article>
+          <article><span>04</span><h3>不确定性</h3><p>未知信息是否被诚实标记</p></article>
+          <article><span>05</span><h3>建议可执行</h3><p>是否包含动作与验证方法</p></article>
+          <article><span>06</span><h3>格式合规</h3><p>输出是否通过版本化 Schema</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>个人 / 犀牛鸟活动作品 · 非腾讯官方发布</p>
+      <p>Powered by Hy3 · Evidence evaluator v0.1</p>
+    </footer>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/assets/app.js" defer></script>
+  </body>
+</html>
+
