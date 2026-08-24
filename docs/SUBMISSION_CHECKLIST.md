@@ -6,8 +6,8 @@ behavior is inferred to work.
 
 ## Repository and application
 
-- [ ] **Public repository with submitted link** - local history contains the complete project, but
-  `BoyuChen1224/RepoScope-Hy3` remains empty until GitHub CLI authentication is restored and pushed.
+- [x] **Public repository with submitted link** - the complete `main` history is published at
+  `https://github.com/BoyuChen1224/RepoScope-Hy3`.
 - [x] **Runnable Hy3 application source** - `src/reposcope/`, `start.bat`, `start.sh`, `Dockerfile`.
 - [x] **README introduction, runtime, and environment requirements** - `README.md`, `README_CN.md`.
 - [x] **Environment configuration example without a committed key** - `.env.example`; `.env` is
@@ -62,7 +62,7 @@ behavior is inferred to work.
 ## Verification gates
 
 - [x] Ruff passes.
-- [x] 11 tests pass; coverage remains separately reported rather than treated as proof of untested paths.
+- [x] 12 tests pass; coverage remains separately reported rather than treated as proof of untested paths.
 - [x] JavaScript syntax check passes.
 - [x] Desktop and 375px mobile browser layouts have no horizontal overflow; demo interaction and
   advisory semantic results render without console errors.
@@ -70,4 +70,4 @@ behavior is inferred to work.
 - [x] Docker Compose configuration parses.
 - [ ] Docker image runtime - Docker daemon is unavailable on this machine, so runtime remains
   explicitly unverified and is not a competition requirement.
-- [ ] GitHub Actions - cannot run until the first remote push.
+- [x] GitHub Actions - public CI run `#1` passed on commit `4ef31b3` in 23 seconds.
