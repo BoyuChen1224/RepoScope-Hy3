@@ -12,6 +12,7 @@ license = { text = "Apache-2.0" }
 authors = [{ name = "BoyuChen1224" }]
 dependencies = [
   "fastapi>=0.115,<1",
+  "httpx[socks]>=0.28,<1",
   "openai>=1.60,<2",
   "pydantic-settings>=2.7,<3",
   "python-multipart>=0.0.20,<1",
@@ -20,7 +21,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "httpx>=0.28,<1",
+  "pillow>=11,<13",
   "pytest>=8.3,<9",
   "pytest-cov>=6,<7",
   "ruff>=0.9,<1",
@@ -43,4 +44,3 @@ target-version = "py311"
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "S"]
 ignore = ["S101"]
-

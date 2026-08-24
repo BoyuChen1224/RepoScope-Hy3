@@ -106,4 +106,3 @@ def test_evaluator_caps_fabricated_references() -> None:
 
     assert result.total_score <= 59
     assert result.hard_failures
-

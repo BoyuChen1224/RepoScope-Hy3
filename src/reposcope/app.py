@@ -18,7 +18,9 @@ from .models import (
     GenerateRequest,
     InspectRequest,
     RepositoryManifest,
+    SemanticEvaluationResult,
 )
+from .semantic_evaluator import Hy3SemanticEvaluator
 
 STATIC_DIR = Path(__file__).parent / "static"
 
@@ -57,6 +59,16 @@ def evaluate(request: EvaluateRequest) -> EvaluationResult:
     return evaluate_report(request.manifest, request.report)
 
 
+@app.post("/api/evaluations/judge", response_model=SemanticEvaluationResult)
+def judge(request: EvaluateRequest) -> SemanticEvaluationResult:
+    try:
+        return Hy3SemanticEvaluator(get_settings()).evaluate(request.manifest, request.report)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502, detail=f"Hy3 semantic evaluation failed: {exc}"
+        ) from exc
+
+
 if STATIC_DIR.exists():
     app.mount("/assets", StaticFiles(directory=STATIC_DIR), name="assets")
 
@@ -64,4 +76,3 @@ if STATIC_DIR.exists():
 @app.get("/", include_in_schema=False)
 def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
-

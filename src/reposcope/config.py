@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from typing import Annotated
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -12,12 +13,14 @@ class Settings(BaseSettings):
     hy3_base_url: str = "https://tokenhub.tencentmaas.com/v1"
     hy3_api_key: str = "EMPTY"
     hy3_model: str = "hy3"
+    hy3_enable_json_response_format: bool = False
     hy3_enable_reasoning_effort: bool = False
     hy3_reasoning_effort: str = "high"
 
     reposcope_max_repo_mb: int = Field(default=80, ge=1, le=500)
     reposcope_clone_timeout_seconds: int = Field(default=90, ge=10, le=600)
-    reposcope_allowed_git_hosts: tuple[str, ...] = ("github.com",)
+    reposcope_allowed_git_hosts: Annotated[tuple[str, ...], NoDecode] = ("github.com",)
+    reposcope_max_context_chars: int = Field(default=180_000, ge=10_000, le=800_000)
 
     @field_validator("reposcope_allowed_git_hosts", mode="before")
     @classmethod
@@ -30,4 +33,3 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

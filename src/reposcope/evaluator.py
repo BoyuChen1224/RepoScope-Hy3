@@ -20,9 +20,7 @@ def _score_ratio(ratio: float) -> float:
     return 0.0
 
 
-def evaluate_report(
-    manifest: RepositoryManifest, report: DueDiligenceReport
-) -> EvaluationResult:
+def evaluate_report(manifest: RepositoryManifest, report: DueDiligenceReport) -> EvaluationResult:
     document_map = {document.path: document for document in manifest.documents}
     claims = report.claims
     cited_claims = sum(bool(claim.evidence) for claim in claims)

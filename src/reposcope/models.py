@@ -114,6 +114,20 @@ class EvaluationResult(BaseModel):
     diagnostics: dict[str, float | int | str] = Field(default_factory=dict)
 
 
+class ClaimJudgement(BaseModel):
+    claim_id: str = Field(pattern=r"^C\d{3}$")
+    verdict: str = Field(pattern=r"^(supported|partially_supported|unsupported|contradicted)$")
+    explanation: str
+
+
+class SemanticEvaluationResult(BaseModel):
+    evaluator_version: str = "semantic-1.0"
+    dimensions: list[EvaluationDimension]
+    claim_judgements: list[ClaimJudgement]
+    missing_material_risks: list[str] = Field(default_factory=list)
+    judge_warnings: list[str] = Field(default_factory=list)
+
+
 class EvaluateRequest(BaseModel):
     manifest: RepositoryManifest
     report: DueDiligenceReport

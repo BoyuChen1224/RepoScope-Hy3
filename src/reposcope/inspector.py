@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 import shutil
 import subprocess
@@ -77,6 +78,24 @@ SECRET_PATTERNS = (
     re.compile(r"gh[pousr]_[A-Za-z0-9_]{30,}"),
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
 )
+
+IGNORED_DIRECTORIES = {
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".next",
+    ".pytest_cache",
+    ".reposcope",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "build",
+    "dist",
+    "node_modules",
+    "tmp",
+    "vendor",
+}
 
 
 class InspectionError(RuntimeError):
@@ -188,8 +207,21 @@ def inspect_worktree(
     has_readme = False
     has_security_policy = False
 
-    for path in root.rglob("*"):
-        if not path.is_file() or ".git" in path.parts:
+    paths: list[Path] = []
+    for current_root, directories, files in os.walk(root, followlinks=False):
+        directories[:] = [
+            name
+            for name in directories
+            if name not in IGNORED_DIRECTORIES and not (Path(current_root) / name).is_symlink()
+        ]
+        paths.extend(
+            Path(current_root) / filename
+            for filename in files
+            if filename == ".env.example" or not filename.startswith(".env")
+        )
+
+    for path in paths:
+        if path.is_symlink() or not path.is_file():
             continue
         relative = path.relative_to(root).as_posix()
         try:
@@ -213,8 +245,10 @@ def inspect_worktree(
         has_readme = has_readme or name.startswith("readme")
         has_security_policy = has_security_policy or name == "security.md"
 
-        is_relevant = name in IMPORTANT_NAMES or suffix in TEXT_SUFFIXES and (
-            size <= 120_000 and (len(documents) < 160 or _document_tags(relative))
+        is_relevant = (
+            name in IMPORTANT_NAMES
+            or suffix in TEXT_SUFFIXES
+            and (size <= 120_000 and (len(documents) < 160 or _document_tags(relative)))
         )
         if not is_relevant:
             continue

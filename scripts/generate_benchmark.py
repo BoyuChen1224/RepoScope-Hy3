@@ -58,8 +58,7 @@ def manifest(index: int) -> RepositoryManifest:
                 size_bytes=100,
                 line_count=3,
                 excerpt=(
-                    '1: [project]\n2: name = "benchmark-project"\n'
-                    '3: requires-python = ">=3.11"'
+                    '1: [project]\n2: name = "benchmark-project"\n3: requires-python = ">=3.11"'
                 ),
                 tags=["project-metadata"],
             ),

@@ -37,8 +37,18 @@ The weighted score is normalized to 100. Evidence validity and quote grounding t
 5. **Ablation (planned evidence):** compare rules-only, semantic-only, and hybrid variants on the same
    frozen cases.
 
+## Semantic rubric v1.0
+
+The optional `/api/evaluations/judge` endpoint asks Hy3 for four additional 0-4 dimensions: factual
+accuracy, evidence entailment, material-risk completeness, and professional clarity. The judge sees a
+blind frozen snapshot and a report, not generator metadata. Repository text is explicitly treated as
+untrusted evidence to reduce prompt-injection risk.
+
+This semantic score is advisory until calibrated against blinded human labels. Using the same model
+family to generate and judge an answer can introduce correlated bias; the deterministic hard failures
+therefore remain authoritative, and the UI must not silently replace them with a semantic score.
+
 ## Non-negotiable reporting rule
 
 Skipped live calls, missing human labels, and unavailable sandbox execution are **unverified**, never
 passed. Generated result files must name the evaluator version, sample count, and evidence boundary.
-

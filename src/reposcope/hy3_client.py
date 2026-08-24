@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 
 from openai import OpenAI
 
@@ -17,7 +18,21 @@ evidence of absence. Recommendations must include a concrete action and a verifi
 """
 
 
-def _compact_manifest(manifest: RepositoryManifest) -> dict[str, object]:
+def _compact_manifest(manifest: RepositoryManifest, max_chars: int) -> dict[str, object]:
+    prioritized = sorted(
+        manifest.documents,
+        key=lambda document: (not bool(document.tags), document.path.casefold()),
+    )
+    documents: list[dict[str, object]] = []
+    used_chars = 0
+    for document in prioritized:
+        remaining = max_chars - used_chars
+        if remaining <= 500:
+            break
+        payload = document.model_dump()
+        payload["excerpt"] = document.excerpt[:remaining]
+        documents.append(payload)
+        used_chars += len(str(payload["excerpt"]))
     return {
         "source_url": manifest.source_url,
         "commit_sha": manifest.commit_sha,
@@ -27,8 +42,19 @@ def _compact_manifest(manifest: RepositoryManifest) -> dict[str, object]:
         "languages": manifest.languages,
         "signals": manifest.signals,
         "warnings": manifest.warnings,
-        "documents": [document.model_dump() for document in manifest.documents],
+        "documents": documents,
+        "context_budget": {
+            "available_documents": len(manifest.documents),
+            "included_documents": len(documents),
+            "included_excerpt_characters": used_chars,
+        },
     }
+
+
+def _extract_json(content: str) -> str:
+    stripped = content.strip()
+    fenced = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", stripped, flags=re.DOTALL)
+    return fenced.group(1) if fenced else stripped
 
 
 class Hy3ReportGenerator:
@@ -39,7 +65,9 @@ class Hy3ReportGenerator:
     def generate(self, manifest: RepositoryManifest) -> DueDiligenceReport:
         user_payload = {
             "task": "Produce a repository adoption due-diligence report for the stated goal.",
-            "repository_snapshot": _compact_manifest(manifest),
+            "repository_snapshot": _compact_manifest(
+                manifest, self.settings.reposcope_max_context_chars
+            ),
             "output_schema": DueDiligenceReport.model_json_schema(),
         }
         kwargs: dict[str, object] = {}
@@ -49,6 +77,8 @@ class Hy3ReportGenerator:
                     "reasoning_effort": self.settings.hy3_reasoning_effort,
                 }
             }
+        if self.settings.hy3_enable_json_response_format:
+            kwargs["response_format"] = {"type": "json_object"}
         response = self.client.chat.completions.create(
             model=self.settings.hy3_model,
             messages=[
@@ -57,10 +87,9 @@ class Hy3ReportGenerator:
             ],
             temperature=0.2,
             top_p=1.0,
-            response_format={"type": "json_object"},
             **kwargs,
         )
         content = response.choices[0].message.content
         if not content:
             raise RuntimeError("Hy3 returned an empty report.")
-        return DueDiligenceReport.model_validate_json(content)
+        return DueDiligenceReport.model_validate_json(_extract_json(content))

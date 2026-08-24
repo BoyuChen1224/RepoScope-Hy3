@@ -23,6 +23,10 @@ def test_inspect_worktree_collects_core_signals(tmp_path: Path) -> None:
     tests = tmp_path / "tests"
     tests.mkdir()
     (tests / "test_demo.py").write_text("def test_ok(): assert True\n", encoding="utf-8")
+    ignored = tmp_path / ".venv"
+    ignored.mkdir()
+    (ignored / "secret.py").write_text("print('not project evidence')\n", encoding="utf-8")
+    (tmp_path / ".env").write_text("HY3_API_KEY=do-not-collect\n", encoding="utf-8")
 
     manifest = inspect_worktree(
         tmp_path,
@@ -38,4 +42,3 @@ def test_inspect_worktree_collects_core_signals(tmp_path: Path) -> None:
     assert manifest.signals["has_license"] is True
     assert manifest.signals["has_tests"] is True
     assert {doc.path for doc in manifest.documents} >= {"README.md", "LICENSE"}
-

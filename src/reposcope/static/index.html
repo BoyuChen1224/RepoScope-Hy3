@@ -91,6 +91,25 @@
               <div class="evidence-list" id="evidenceList"></div>
             </div>
             <div class="callout" id="resultCallout"></div>
+            <div class="pipeline-actions">
+              <button class="primary" type="button" id="generateButton">
+                <span>调用 Hy3 生成尽调报告</span><span aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div class="report-view hidden" id="reportView">
+              <div class="report-summary">
+                <div><span>ADOPTION DECISION</span><strong id="reportDecision"></strong></div>
+                <p id="reportSummary"></p>
+              </div>
+              <div class="report-columns">
+                <section><div class="section-title"><h3>关键结论</h3><span id="claimCount"></span></div><div id="claimList"></div></section>
+                <section><div class="section-title"><h3>风险与未知项</h3><span id="riskCount"></span></div><div id="riskList"></div></section>
+              </div>
+              <div class="score-breakdown hidden" id="scoreBreakdown">
+                <div class="section-title"><h3>评估维度</h3><span id="gradeLabel"></span></div>
+                <div id="dimensionList"></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -120,4 +139,3 @@
     <script src="/assets/app.js" defer></script>
   </body>
 </html>
-
