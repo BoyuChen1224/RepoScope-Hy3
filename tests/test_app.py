@@ -15,6 +15,17 @@ def test_health_and_home() -> None:
     assert health.json()["status"] == "ok"
     assert home.status_code == 200
     assert "RepoScope Hy3" in home.text
+    assert 'data-lang="zh"' in home.text
+    assert 'data-lang="en"' in home.text
+
+    icon_styles = client.get("/assets/vendor/phosphor/style.css")
+    icon_font = client.get("/assets/vendor/phosphor/Phosphor.woff2")
+    app_script = client.get("/assets/app.js")
+
+    assert icon_styles.status_code == 200
+    assert icon_font.status_code == 200
+    assert app_script.status_code == 200
+    assert "reposcope-language" in app_script.text
 
 
 def test_inspect_rejects_non_allowlisted_host() -> None:

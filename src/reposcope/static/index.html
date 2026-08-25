@@ -3,147 +3,113 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="RepoScope Hy3 - evidence-grounded repository due diligence" />
-    <title>RepoScope Hy3</title>
+    <meta name="description" content="RepoScope Hy3 - 基于证据的开源仓库采用评估工作台" id="metaDescription" />
+    <title>RepoScope Hy3 · 开源项目采用评估</title>
+    <link rel="stylesheet" href="/assets/vendor/phosphor/style.css" />
     <link rel="stylesheet" href="/assets/styles.css" />
   </head>
   <body>
-    <div class="grain"></div>
-    <header class="topbar">
-      <a class="brand" href="#" aria-label="RepoScope Hy3 首页">
-        <span class="brand-mark">R</span>
-        <span>RepoScope <em>Hy3</em></span>
-      </a>
-      <div class="top-meta">
-        <span class="status-dot"></span>
-        <span id="apiStatus">正在连接评估器</span>
-        <a href="/docs" target="_blank" rel="noreferrer">API</a>
+    <header class="app-header">
+      <div class="header-inner">
+        <a class="brand" href="#workspace" aria-label="RepoScope Hy3"><span>RepoScope</span><strong>Hy3</strong></a>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="product-name" data-i18n="productName">开源项目采用评估</span>
+        <nav class="primary-nav" aria-label="Primary navigation" data-i18n-aria="primaryNav">
+          <a class="active" href="#workspace" data-i18n="workspaceNav">工作台</a>
+          <a href="#method" data-i18n="methodNav">评估方法</a>
+          <a href="/docs" target="_blank" rel="noreferrer" data-i18n="apiDocsNav">API 文档</a>
+        </nav>
+        <div class="header-tools">
+          <div class="api-state" aria-live="polite"><span class="status-dot"></span><span id="apiStatus" data-i18n="apiConnecting">正在连接</span></div>
+          <div class="language-switch" role="group" aria-label="语言切换" data-i18n-aria="languageSwitch">
+            <button class="language-button active" type="button" data-lang="zh" aria-pressed="true">中</button>
+            <span aria-hidden="true">/</span>
+            <button class="language-button" type="button" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+        </div>
       </div>
     </header>
 
-    <main>
-      <section class="hero">
-        <div class="eyebrow">Evidence before confidence</div>
-        <h1>让每个采用结论<br /><span>都有证据可查。</span></h1>
-        <p class="hero-copy">
-          Hy3 阅读真实仓库，生成技术尽调报告。RepoScope 验证文件、行号与原文，
-          把“看起来可信”变成“可以审计”。
-        </p>
-        <div class="hero-stats" aria-label="系统能力摘要">
-          <div><strong>6</strong><span>确定性评估维度</span></div>
-          <div><strong>100%</strong><span>结论级证据链</span></div>
-          <div><strong>0</strong><span>密钥进入浏览器</span></div>
-        </div>
-      </section>
+    <section class="workflow-strip" aria-label="评估流程" data-i18n-aria="workflowLabel">
+      <ol class="workflow-steps">
+        <li class="active" data-stage="1" aria-current="step"><span class="stage-number">1</span><span class="stage-copy"><strong data-i18n="stage1Title">输入仓库</strong><small data-i18n="stage1Desc">填写仓库与采用目标</small></span></li>
+        <li data-stage="2"><span class="stage-number">2</span><span class="stage-copy"><strong data-i18n="stage2Title">锁定快照</strong><small data-i18n="stage2Desc">分析并固定代码快照</small></span></li>
+        <li data-stage="3"><span class="stage-number">3</span><span class="stage-copy"><strong data-i18n="stage3Title">生成报告</strong><small data-i18n="stage3Desc">执行自动化证据审查</small></span></li>
+        <li data-stage="4"><span class="stage-number">4</span><span class="stage-copy"><strong data-i18n="stage4Title">评估结论</strong><small data-i18n="stage4Desc">查看评分与采用建议</small></span></li>
+      </ol>
+    </section>
 
-      <section class="workspace" aria-label="仓库分析工作台">
-        <div class="panel input-panel">
-          <div class="panel-heading">
-            <span class="step">01</span>
-            <div>
-              <h2>定义采用决策</h2>
-              <p>系统会固定当前 commit，避免证据随时间漂移。</p>
-            </div>
-          </div>
+    <main id="workspace" class="app-main">
+      <div class="page-heading">
+        <div><p class="section-kicker" data-i18n="pageKicker">EVIDENCE-GROUNDED REVIEW</p><h1 data-i18n="pageTitle">开源项目采用评估</h1><p data-i18n="pageSubtitle">固定真实代码快照，让每个采用结论都有证据可查。</p></div>
+        <div class="trust-note"><i class="ph ph-shield-check" aria-hidden="true"></i><span data-i18n="trustNote">仅分析公开仓库，API 密钥不会进入浏览器</span></div>
+      </div>
+
+      <section class="workspace-grid" aria-label="仓库分析工作台" data-i18n-aria="workspaceLabel">
+        <aside class="surface input-panel">
+          <div class="surface-heading"><span class="heading-icon"><i class="ph ph-git-branch" aria-hidden="true"></i></span><div><h2 data-i18n="inputTitle">输入仓库</h2><p data-i18n="inputSubtitle">定义这次采用决策的边界。</p></div></div>
           <form id="analysisForm">
-            <label for="repoUrl">公开 GitHub 仓库</label>
-            <div class="url-field">
-              <span aria-hidden="true">⌁</span>
-              <input
-                id="repoUrl"
-                type="url"
-                value="https://github.com/BoyuChen1224/RepoScope-Hy3"
-                required
-              />
+            <label for="repoUrl"><span data-i18n="repoLabel">公开 GitHub 仓库</span><i class="ph ph-info" aria-hidden="true"></i></label>
+            <div class="control-with-icon"><i class="ph ph-github-logo" aria-hidden="true"></i><input id="repoUrl" type="url" value="https://github.com/BoyuChen1224/RepoScope-Hy3" placeholder="https://github.com/owner/repository" data-i18n-placeholder="repoPlaceholder" autocomplete="url" required /></div>
+            <label for="goal"><span data-i18n="goalLabel">你的采用目标</span><i class="ph ph-info" aria-hidden="true"></i></label>
+            <textarea id="goal" rows="6" maxlength="500" data-i18n-placeholder="goalPlaceholder" required>评估该项目是否适合在企业研发团队中用于开源项目采用前的技术尽调。</textarea>
+            <div class="character-count"><span id="goalCount">35</span> / 500</div>
+            <div class="guidance-box">
+              <strong><i class="ph ph-lightbulb" aria-hidden="true"></i><span data-i18n="guidanceTitle">填写建议</span></strong>
+              <ul><li data-i18n="guidance1">说明使用场景，例如嵌入产品、内部工具或二次开发。</li><li data-i18n="guidance2">写明目标用户、部署方式与合规关注点。</li><li data-i18n="guidance3">系统会固定当前 commit，避免证据随时间漂移。</li></ul>
             </div>
-            <label for="goal">你准备如何使用它？</label>
-            <textarea id="goal" rows="4" required>评估该项目是否适合在企业研发团队中用于开源项目采用前的技术尽调。</textarea>
             <div class="form-actions">
-              <button class="primary" type="submit" id="runButton">
-                <span>开始证据审查</span><span aria-hidden="true">→</span>
-              </button>
-              <button class="secondary" type="button" id="demoButton">载入演示结果</button>
+              <button class="button primary" type="submit" id="runButton"><span data-i18n="runButton">开始证据审查</span><i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+              <button class="button secondary" type="button" id="demoButton"><i class="ph ph-play-circle" aria-hidden="true"></i><span data-i18n="demoButton">载入演示结果</span></button>
             </div>
           </form>
-          <p class="privacy-note">仓库内容仅在本次分析进程中使用，临时克隆会在检查后删除。</p>
-        </div>
+          <p class="privacy-note"><i class="ph ph-lock-key" aria-hidden="true"></i><span data-i18n="privacyNote">仓库内容仅在本次分析进程中使用，临时克隆会在检查后删除。</span></p>
+        </aside>
 
-        <div class="panel result-panel" id="resultPanel">
+        <section class="surface result-panel" id="resultPanel" aria-live="polite">
           <div class="empty-state" id="emptyState">
-            <div class="scope-graphic"><i></i><i></i><i></i></div>
-            <h2>等待仓库快照</h2>
-            <p>检查完成后，这里会显示证据覆盖、风险信号与评估得分。</p>
+            <div class="empty-icon"><i class="ph ph-stack" aria-hidden="true"></i></div>
+            <span class="empty-label" data-i18n="emptyLabel">READY FOR SNAPSHOT</span><h2 data-i18n="emptyTitle">等待仓库快照</h2><p data-i18n="emptyDesc">完成左侧信息后，我们会采集证据、固定 commit，并在这里展示可审计的评估结果。</p>
+            <div class="empty-checklist"><span><i class="ph ph-check-circle" aria-hidden="true"></i><span data-i18n="emptyCheck1">验证文件与行号</span></span><span><i class="ph ph-check-circle" aria-hidden="true"></i><span data-i18n="emptyCheck2">区分事实与未知项</span></span><span><i class="ph ph-check-circle" aria-hidden="true"></i><span data-i18n="emptyCheck3">给出可执行建议</span></span></div>
           </div>
+
           <div class="results hidden" id="results">
-            <div class="result-head">
-              <div>
-                <span class="result-kicker">Snapshot locked</span>
-                <h2 id="resultRepo">repository</h2>
-                <code id="resultSha">commit</code>
-              </div>
-              <div class="score-ring" style="--score: 86">
-                <strong id="resultScore">86</strong><span>/100</span>
-              </div>
-            </div>
+            <header class="repository-header">
+              <div class="repository-identity"><span class="repository-icon"><i class="ph ph-github-logo" aria-hidden="true"></i></span><div><div class="snapshot-label"><i class="ph ph-lock-key" aria-hidden="true"></i><span data-i18n="snapshotLocked">快照已锁定</span></div><h2 id="resultRepo">repository</h2><div class="repository-meta"><code id="resultSha">commit</code><span id="resultBranch">main</span></div></div></div>
+              <div class="score-summary"><div class="score-ring"><strong id="resultScore">90</strong><span>/100</span></div><div><span data-i18n="overallScore">总体评分</span><strong id="scoreGrade">—</strong><small id="scoreCaption" data-i18n="snapshotScore">快照完整度</small></div></div>
+            </header>
             <div class="signal-grid" id="signalGrid"></div>
-            <div class="evidence-section">
-              <div class="section-title"><h3>证据清单</h3><span id="evidenceCount"></span></div>
-              <div class="evidence-list" id="evidenceList"></div>
-            </div>
+            <section class="content-section evidence-section"><div class="section-title"><div><h3 data-i18n="evidenceTitle">证据清单</h3><p data-i18n="evidenceSubtitle">来自固定快照的重点文件</p></div><span id="evidenceCount"></span></div><div class="evidence-list" id="evidenceList"></div></section>
             <div class="callout" id="resultCallout"></div>
-            <div class="pipeline-actions">
-              <button class="primary" type="button" id="generateButton">
-                <span>调用 Hy3 生成尽调报告</span><span aria-hidden="true">→</span>
-              </button>
-            </div>
+            <div class="pipeline-actions"><button class="button primary" type="button" id="generateButton"><span data-i18n="generateButton">调用 Hy3 生成尽调报告</span><i class="ph ph-arrow-right" aria-hidden="true"></i></button></div>
             <div class="report-view hidden" id="reportView">
-              <div class="report-summary">
-                <div><span>ADOPTION DECISION</span><strong id="reportDecision"></strong></div>
-                <p id="reportSummary"></p>
-              </div>
+              <section class="decision-summary"><div class="decision-label"><span data-i18n="adoptionDecision">采用结论</span><strong id="reportDecision"></strong></div><p id="reportSummary"></p></section>
               <div class="report-columns">
-                <section><div class="section-title"><h3>关键结论</h3><span id="claimCount"></span></div><div id="claimList"></div></section>
-                <section><div class="section-title"><h3>风险与未知项</h3><span id="riskCount"></span></div><div id="riskList"></div></section>
+                <section class="content-section"><div class="section-title"><h3 data-i18n="claimsTitle">关键结论</h3><span id="claimCount"></span></div><div class="report-list" id="claimList"></div></section>
+                <section class="content-section"><div class="section-title"><h3 data-i18n="risksTitle">风险与未知项</h3><span id="riskCount"></span></div><div class="report-list" id="riskList"></div></section>
               </div>
-              <div class="score-breakdown hidden" id="scoreBreakdown">
-                <div class="section-title"><h3>评估维度</h3><span id="gradeLabel"></span></div>
-                <div id="dimensionList"></div>
-              </div>
-              <div class="semantic-actions hidden" id="semanticActions">
-                <button class="secondary" type="button" id="judgeButton">运行 Hy3 语义复核</button>
-                <p>语义分数是辅助证据，不能覆盖规则层硬门槛。</p>
-              </div>
-              <div class="semantic-view hidden" id="semanticView">
-                <div class="section-title"><h3>Hy3 语义复核</h3><span>ADVISORY</span></div>
-                <div id="semanticDimensionList"></div>
-                <div class="judgement-list" id="judgementList"></div>
-              </div>
+              <section class="content-section score-breakdown hidden" id="scoreBreakdown"><div class="section-title"><div><h3 data-i18n="dimensionsTitle">六大评估维度</h3><p data-i18n="dimensionsSubtitle">规则层验证真实路径、引文和格式</p></div><span id="gradeLabel"></span></div><div class="dimension-list" id="dimensionList"></div></section>
+              <div class="semantic-actions hidden" id="semanticActions"><button class="button secondary" type="button" id="judgeButton"><i class="ph ph-brain" aria-hidden="true"></i><span data-i18n="judgeButton">运行 Hy3 语义复核</span></button><p data-i18n="semanticNote">语义分数是辅助证据，不能覆盖规则层硬门槛。</p></div>
+              <section class="content-section semantic-view hidden" id="semanticView"><div class="section-title"><div><h3 data-i18n="semanticTitle">Hy3 语义复核</h3><p data-i18n="semanticSubtitle">检查事实准确、证据蕴含与风险完整性</p></div><span>ADVISORY</span></div><div class="dimension-list" id="semanticDimensionList"></div><div class="judgement-list" id="judgementList"></div></section>
             </div>
           </div>
-        </div>
+        </section>
       </section>
 
-      <section class="method">
-        <div class="method-intro">
-          <span class="step">02</span>
-          <h2>一个总分不够。<br />我们展示分数从哪里来。</h2>
-          <p>规则检查负责客观事实，Hy3 负责语义判断，人工标注负责校准边界。</p>
-        </div>
-        <div class="dimension-list">
-          <article><span>01</span><h3>证据覆盖</h3><p>关键结论是否给出来源</p></article>
-          <article><span>02</span><h3>引用有效</h3><p>文件与行号是否真实存在</p></article>
-          <article><span>03</span><h3>原文落地</h3><p>引用文本是否能在快照中找到</p></article>
-          <article><span>04</span><h3>不确定性</h3><p>未知信息是否被诚实标记</p></article>
-          <article><span>05</span><h3>建议可执行</h3><p>是否包含动作与验证方法</p></article>
-          <article><span>06</span><h3>格式合规</h3><p>输出是否通过版本化 Schema</p></article>
+      <section class="method-section" id="method">
+        <div class="method-heading"><p class="section-kicker" data-i18n="methodKicker">HOW THE SCORE IS BUILT</p><h2 data-i18n="methodTitle">一个总分不够，我们展示分数从哪里来。</h2><p data-i18n="methodSubtitle">规则检查负责客观事实，Hy3 负责语义判断，人工标注用于校准边界。</p></div>
+        <div class="method-grid">
+          <article><span>01</span><i class="ph ph-link" aria-hidden="true"></i><h3 data-i18n="method1Title">证据覆盖</h3><p data-i18n="method1Desc">关键结论是否给出来源</p></article>
+          <article><span>02</span><i class="ph ph-file-magnifying-glass" aria-hidden="true"></i><h3 data-i18n="method2Title">引用有效</h3><p data-i18n="method2Desc">文件与行号是否真实存在</p></article>
+          <article><span>03</span><i class="ph ph-quotes" aria-hidden="true"></i><h3 data-i18n="method3Title">原文落地</h3><p data-i18n="method3Desc">引用文本是否能在快照中找到</p></article>
+          <article><span>04</span><i class="ph ph-question" aria-hidden="true"></i><h3 data-i18n="method4Title">不确定性</h3><p data-i18n="method4Desc">未知信息是否被诚实标记</p></article>
+          <article><span>05</span><i class="ph ph-list-checks" aria-hidden="true"></i><h3 data-i18n="method5Title">建议可执行</h3><p data-i18n="method5Desc">是否包含动作与验证方法</p></article>
+          <article><span>06</span><i class="ph ph-brackets-curly" aria-hidden="true"></i><h3 data-i18n="method6Title">格式合规</h3><p data-i18n="method6Desc">输出是否通过版本化 Schema</p></article>
         </div>
       </section>
     </main>
 
-    <footer>
-      <p>个人 / 犀牛鸟活动作品 · 非腾讯官方发布</p>
-      <p>Powered by Hy3 · Evidence evaluator v0.1</p>
-    </footer>
+    <footer class="app-footer"><p data-i18n="footerDisclaimer">个人 / 犀牛鸟活动作品 · 非腾讯官方发布</p><p>Powered by Hy3 · Evidence evaluator v1.1</p></footer>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="/assets/app.js" defer></script>
   </body>

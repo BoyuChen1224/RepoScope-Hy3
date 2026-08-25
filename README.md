@@ -6,7 +6,7 @@ RepoScope Hy3 is an evidence-grounded open-source repository due-diligence assis
 It turns a repository snapshot into an adoption report whose material claims can be traced back to
 files, line ranges, and quotes, then scores the report with deterministic evaluation rules.
 
-![RepoScope Hy3 evidence workflow demo](assets/demo/reposcope-hy3-demo.gif)
+![RepoScope Hy3 bilingual evidence workspace](assets/screenshots/tencent-redesign-desktop.png)
 
 Chinese documentation: [README_CN.md](README_CN.md)
 
@@ -42,8 +42,9 @@ then completed both evaluation layers on the same frozen commit. See
 ## Status
 
 The current milestone includes secure repository ingestion, versioned evidence/report schemas, an
-OpenAI-compatible Hy3 generator, deterministic and semantic evaluators, a responsive evidence UI,
-focused tests, and a reproducible synthetic benchmark.
+OpenAI-compatible Hy3 generator, deterministic and semantic evaluators, a responsive Chinese/English
+evidence workspace (Chinese by default with a persistent language switch), focused tests, and a
+reproducible synthetic benchmark.
 
 ## Quick start
 

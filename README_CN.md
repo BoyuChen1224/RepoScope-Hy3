@@ -6,7 +6,7 @@ RepoScope Hy3 是一个由 Hy3 驱动、强调证据可追溯性的开源项目�
 commit 的仓库快照转换为采用建议，并逐条验证报告引用的文件、行号与原文，避免流畅但无
 证据的结论获得高分。
 
-![RepoScope Hy3 证据工作流演示](assets/demo/reposcope-hy3-demo.gif)
+![RepoScope Hy3 中英双语证据工作台](assets/screenshots/tencent-redesign-desktop.png)
 
 ## 为什么不是普通的仓库聊天机器人
 
@@ -36,6 +36,9 @@ commit 的仓库快照转换为采用建议，并逐条验证报告引用的文�
 
 另一个针对 `pypa/sampleproject` 的真实浏览器端到端案例发现并修复了 `LICENSE.txt` 采集缺陷，
 随后在同一冻结 commit 上完成两层评估。详见 [`reports/live_ui_e2e.md`](reports/live_ui_e2e.md)。
+
+新版工作台采用轻量企业控制台风格，默认中文，并可通过顶部 `中 / EN` 按钮无刷新切换全部
+静态文案、演示结果和动态提示；语言偏好会保存在当前浏览器中。桌面与移动端均为响应式布局。
 
 ## 快速启动
 
