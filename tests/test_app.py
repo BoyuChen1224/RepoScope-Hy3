@@ -17,6 +17,7 @@ def test_health_and_home() -> None:
     assert "RepoScope Hy3" in home.text
     assert 'data-lang="zh"' in home.text
     assert 'data-lang="en"' in home.text
+    assert 'id="themeToggle"' in home.text
 
     icon_styles = client.get("/assets/vendor/phosphor/style.css")
     icon_font = client.get("/assets/vendor/phosphor/Phosphor.woff2")
@@ -26,6 +27,8 @@ def test_health_and_home() -> None:
     assert icon_font.status_code == 200
     assert app_script.status_code == 200
     assert "reposcope-language" in app_script.text
+    assert "reposcope-theme" in app_script.text
+    assert 'let currentTheme = "light"' in app_script.text
 
 
 def test_inspect_rejects_non_allowlisted_host() -> None:

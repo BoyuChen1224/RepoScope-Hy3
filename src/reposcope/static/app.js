@@ -7,6 +7,7 @@ const emptyState = document.querySelector("#emptyState");
 const results = document.querySelector("#results");
 const toast = document.querySelector("#toast");
 const goalInput = document.querySelector("#goal");
+const themeButton = document.querySelector("#themeToggle");
 
 const defaultGoals = {
   zh: "评估该项目是否适合在企业研发团队中用于开源项目采用前的技术尽调。",
@@ -18,7 +19,7 @@ const messages = {
     title: "RepoScope Hy3 · 开源项目采用评估",
     description: "RepoScope Hy3 - 基于证据的开源仓库采用评估工作台",
     productName: "开源项目采用评估", primaryNav: "主导航", workspaceNav: "工作台", methodNav: "评估方法", apiDocsNav: "API 文档",
-    languageSwitch: "语言切换", apiConnecting: "正在连接", apiOnline: "评估器在线", apiOffline: "评估器离线",
+    languageSwitch: "语言切换", themeDark: "夜间", themeLight: "日间", themeDarkAria: "切换到夜间模式", themeLightAria: "切换到日间模式", apiConnecting: "正在连接", apiOnline: "评估器在线", apiOffline: "评估器离线",
     workflowLabel: "评估流程", stage1Title: "输入仓库", stage1Desc: "填写仓库与采用目标", stage2Title: "锁定快照", stage2Desc: "分析并固定代码快照",
     stage3Title: "生成报告", stage3Desc: "执行自动化证据审查", stage4Title: "评估结论", stage4Desc: "查看评分与采用建议",
     pageKicker: "EVIDENCE-GROUNDED REVIEW", pageTitle: "开源项目采用评估", pageSubtitle: "固定真实代码快照，让每个采用结论都有证据可查。",
@@ -48,7 +49,7 @@ const messages = {
     title: "RepoScope Hy3 · Open-source Adoption Review",
     description: "RepoScope Hy3 - an evidence-grounded open-source adoption review workspace",
     productName: "Open-source Adoption Review", primaryNav: "Primary navigation", workspaceNav: "Workspace", methodNav: "Method", apiDocsNav: "API Docs",
-    languageSwitch: "Language switch", apiConnecting: "Connecting", apiOnline: "Evaluator online", apiOffline: "Evaluator offline",
+    languageSwitch: "Language switch", themeDark: "Dark", themeLight: "Light", themeDarkAria: "Switch to dark mode", themeLightAria: "Switch to light mode", apiConnecting: "Connecting", apiOnline: "Evaluator online", apiOffline: "Evaluator offline",
     workflowLabel: "Review workflow", stage1Title: "Input repository", stage1Desc: "Set the repository and goal", stage2Title: "Lock snapshot", stage2Desc: "Inspect and freeze the commit",
     stage3Title: "Generate report", stage3Desc: "Run the evidence review", stage4Title: "Review decision", stage4Desc: "Read scores and guidance",
     pageKicker: "EVIDENCE-GROUNDED REVIEW", pageTitle: "Open-source adoption review", pageSubtitle: "Freeze the real code snapshot so every adoption claim remains auditable.",
@@ -77,6 +78,7 @@ const messages = {
 };
 
 let currentLanguage = "zh";
+let currentTheme = "light";
 let apiHealthState = "connecting";
 let currentStage = 1;
 let activeManifest = null;
@@ -89,6 +91,7 @@ let activeNoticeKey = null;
 
 try {
   if (window.localStorage.getItem("reposcope-language") === "en") currentLanguage = "en";
+  if (window.localStorage.getItem("reposcope-theme") === "dark") currentTheme = "dark";
 } catch { /* local storage can be unavailable in hardened browsers */ }
 
 function t(key, values = {}) {
@@ -133,6 +136,24 @@ function setStage(stage) {
 function updateApiStatus() {
   const status = document.querySelector("#apiStatus");
   status.textContent = t(apiHealthState === "online" ? "apiOnline" : apiHealthState === "offline" ? "apiOffline" : "apiConnecting");
+}
+
+function updateThemeControl() {
+  const dark = currentTheme === "dark";
+  themeButton.setAttribute("aria-pressed", String(dark));
+  themeButton.setAttribute("aria-label", t(dark ? "themeLightAria" : "themeDarkAria"));
+  themeButton.setAttribute("title", t(dark ? "themeLightAria" : "themeDarkAria"));
+  themeButton.querySelector("i").className = `ph ${dark ? "ph-sun" : "ph-moon"}`;
+  document.querySelector("#themeLabel").textContent = t(dark ? "themeLight" : "themeDark");
+}
+
+function applyTheme(theme, persist = true) {
+  currentTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = currentTheme;
+  updateThemeControl();
+  if (persist) {
+    try { window.localStorage.setItem("reposcope-theme", currentTheme); } catch { /* no-op */ }
+  }
 }
 
 function updateActionLabels() {
@@ -181,6 +202,7 @@ function applyLanguage(language, rerender = true) {
   if (Object.values(defaultGoals).includes(previousGoal)) goalInput.value = defaultGoals[currentLanguage];
   try { window.localStorage.setItem("reposcope-language", currentLanguage); } catch { /* no-op */ }
   updateApiStatus();
+  updateThemeControl();
   updateActionLabels();
   updateGoalCount();
   setStage(currentStage);
@@ -406,7 +428,9 @@ judgeButton.addEventListener("click", async () => {
 });
 
 document.querySelectorAll("[data-lang]").forEach(button => button.addEventListener("click", () => applyLanguage(button.dataset.lang)));
+themeButton.addEventListener("click", () => applyTheme(currentTheme === "dark" ? "light" : "dark"));
 goalInput.addEventListener("input", updateGoalCount);
+applyTheme(currentTheme, false);
 applyLanguage(currentLanguage, false);
 setStage(1);
 checkHealth();

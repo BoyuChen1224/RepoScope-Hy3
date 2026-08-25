@@ -43,8 +43,8 @@ then completed both evaluation layers on the same frozen commit. See
 
 The current milestone includes secure repository ingestion, versioned evidence/report schemas, an
 OpenAI-compatible Hy3 generator, deterministic and semantic evaluators, a responsive Chinese/English
-evidence workspace (Chinese by default with a persistent language switch), focused tests, and a
-reproducible synthetic benchmark.
+evidence workspace (Chinese and light mode by default, with persistent language and theme switches),
+focused tests, and a reproducible synthetic benchmark.
 
 ## Quick start
 
